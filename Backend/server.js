@@ -5,14 +5,30 @@ const config = require("config");
 const cors = require("cors");
 
 
-const app = express();//Pour dire que votre application utilise express
-app.use(express.json());//Analyser les corps des requêtes HTTP contenant des données au format JSON
-app.use(cors());//permettre le partage de ressources entre différentes origines (domaines, protocoles, ou ports).
+const users = require("./routes/api/users"); 
 
+
+// Initialiser express
+const app = express();
+
+// Middleware pour analyser les corps des requêtes JSON
+app.use(express.json());
+
+// Activer CORS
+app.use(cors());
+
+// Connexion à la base de données
 const mongo_url = config.get("mongo_url");
 mongoose.set('strictQuery', true);
-mongoose.connect(mongo_url).then(() => console.log("MongoDB connected..."))
-.catch((err) => console.log(err));
+mongoose
+  .connect(mongo_url)
+  .then(() => console.log("MongoDB connected..."))
+  .catch((err) => console.log(err));
 
-const port = process.env.PORT || 3001;//démarrer le serveur Express et définir sur quel port il doit écouter les requêtes entrantes.
+// Associer les routes aux chemins API
+app.use("/users", users);  // Routes pour les utilisateurs
+
+
+// Démarrer le serveur
+const port = process.env.PORT || 3004;
 app.listen(port, () => console.log(`Server running on port ${port}`));
