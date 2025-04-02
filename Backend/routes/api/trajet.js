@@ -118,7 +118,7 @@ router.delete("/delete/:id", async (req, res) => {
     if (!deletedTrajet) {
       return res.status(404).json({ message: "Trajet non trouvé" });
     }
-    res.status(200).json({ message: "Trajet Suuprimé avec succès" });
+    res.status(200).json({ message: "Trajet Supprimé avec succès" });
   } catch (err) {
     console.log(err);
     res

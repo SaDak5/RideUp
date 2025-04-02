@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const users = require("./routes/api/users");
 const trajets = require("./routes/api/trajet");
+const reservations = require("./routes/api/reservation");
 
 // Initialiser express
 const app = express();
@@ -27,6 +28,8 @@ mongoose
 // Associer les routes aux chemins API
 app.use("/users", users); // Routes pour les utilisateurs
 app.use("/trajets", trajets);
+app.use("/reservations", reservations);
+
 // Démarrer le serveur
 const port = process.env.PORT || 3004;
 app.listen(port, () => console.log(`Server running on port ${port}`));
