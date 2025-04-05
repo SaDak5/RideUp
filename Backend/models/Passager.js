@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const User = require('./User');  
 
 
-const AdminSchema = new mongoose.Schema({
+const PassagerSchema = new mongoose.Schema({
   localisation: {
     type: String,  
     required: true
@@ -10,7 +10,7 @@ const AdminSchema = new mongoose.Schema({
 });
 
 
-AdminSchema.add(User.schema);
+PassagerSchema.add(User.schema);
 
-const Admin = mongoose.model('Admin', AdminSchema);
-module.exports = Admin;
+const Passager = mongoose.model('Passager', PassagerSchema);
+module.exports = Passager;

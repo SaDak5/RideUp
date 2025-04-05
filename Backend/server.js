@@ -5,6 +5,10 @@ const config = require("config");
 const cors = require("cors");
 
 const users = require("./routes/api/users");
+const admin = require("./routes/api/admin");
+
+const conducteurs = require("./routes/api/conducteurs");
+const passagers = require("./routes/api/passagers");
 const trajets = require("./routes/api/trajet");
 
 // Initialiser express
@@ -26,6 +30,9 @@ mongoose
 
 // Associer les routes aux chemins API
 app.use("/users", users); // Routes pour les utilisateurs
+app.use("/admin", admin);
+app.use("/conducteurs", conducteurs);
+app.use("/passagers", passagers);
 app.use("/trajets", trajets);
 // Démarrer le serveur
 const port = process.env.PORT || 3004;
