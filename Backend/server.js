@@ -10,6 +10,7 @@ const admin = require("./routes/api/admin");
 const conducteurs = require("./routes/api/conducteurs");
 const passagers = require("./routes/api/passagers");
 const trajets = require("./routes/api/trajet");
+const reservations = require("./routes/api/reservation");
 
 // Initialiser express
 const app = express();
@@ -34,6 +35,8 @@ app.use("/admin", admin);
 app.use("/conducteurs", conducteurs);
 app.use("/passagers", passagers);
 app.use("/trajets", trajets);
+app.use("/reservations", reservations);
+
 // Démarrer le serveur
 const port = process.env.PORT || 3004;
 app.listen(port, () => console.log(`Server running on port ${port}`));

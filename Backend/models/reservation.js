@@ -9,8 +9,9 @@ const ReservationSchema = new mongoose.Schema(
       required: true,
     },
     statut: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ["en attente", "accepté", "refusé"],
+      default: "en attente",
     },
     date_reservation: {
       type: Date,
