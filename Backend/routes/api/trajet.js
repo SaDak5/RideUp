@@ -7,7 +7,10 @@ const Trajet = require("../../models/trajet");
 // afficher Tous les trajets
 router.get("/all", async (req, res) => {
   try {
-    const trajets = await Trajet.find();
+    const trajets = await Trajet.find().populate({
+      path: "conducteur_id",
+      select: "username",
+    });
     res.status(200).json(trajets);
   } catch (err) {
     res
@@ -26,8 +29,9 @@ router.post("/add", async (req, res) => {
     heure_depart,
     prix,
     description,
+    conducteur_id,
   } = req.body;
-
+  console.log("BODY:", req.body);
   try {
     const nouveauTrajet = new Trajet({
       ville_depart,
@@ -37,6 +41,7 @@ router.post("/add", async (req, res) => {
       heure_depart,
       prix,
       description,
+      conducteur_id,
     });
 
     await nouveauTrajet.save();

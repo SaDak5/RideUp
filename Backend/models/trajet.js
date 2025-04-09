@@ -3,7 +3,7 @@ const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const TrajetSchema = new mongoose.Schema(
   {
-    _id: Number,
+    _id: Number, // Auto-incrémenté
     ville_depart: {
       type: String,
       required: true,
@@ -32,9 +32,9 @@ const TrajetSchema = new mongoose.Schema(
       type: String,
     },
     conducteur_id: {
-      type: mongoose.Schema.Types.ObjectId, // ID du conducteur
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Conducteur",
-      required: false,
+      required: true,
     },
     reservations: [
       {
@@ -43,9 +43,10 @@ const TrajetSchema = new mongoose.Schema(
       },
     ],
   },
-  { _id: false } // Désactiver l'ObjectId par défaut
+  { timestamps: true }
 );
 
 // Appliquer l'auto-incrémentation sur _id
 TrajetSchema.plugin(AutoIncrement, { id: "trajet_seq", inc_field: "_id" });
+
 module.exports = mongoose.model("Trajet", TrajetSchema);

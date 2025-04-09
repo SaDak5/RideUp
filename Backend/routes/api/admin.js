@@ -8,9 +8,19 @@ const Admin = require("../../models/Admin");
 // @desc Register new admin
 // @access Public
 router.post("/register", (req, res) => {
-  const { username, email, password, role, adresse, numTelephone } = req.body;
+  const {
+    username,
+    nom,
+    prenom,
+    adresse,
+    numCin,
+    numTelephone,
+    email,
+    password,
+  } = req.body;
 
-  if (!username || !email || !password || !adresse || !numTelephone) {
+  // Vérification des champs requis
+  if (!username || !nom || !prenom || !adresse || !numCin || !numTelephone || !email || !password) {
     return res.status(400).send({ status: "notok", msg: "Please enter all required data" });
   }
 
@@ -19,7 +29,17 @@ router.post("/register", (req, res) => {
       return res.status(400).send({ status: "notokmail", msg: "Email already exists" });
     }
 
-    const newAdmin = new Admin({ username, email, password, role, adresse, numTelephone });
+    const newAdmin = new Admin({
+      username,
+      nom,
+      prenom,
+      adresse,
+      numCin,
+      numTelephone,
+      email,
+      password,
+      role: "admin", // Assurer que le rôle est "admin"
+    });
 
     bcrypt.genSalt(10, (err, salt) => {
       if (err) return res.status(500).send({ status: "error", msg: "Internal server error" });
@@ -54,7 +74,7 @@ router.post("/login", (req, res) => {
   }
 
   Admin.findOne({ email }).then((admin) => {
-    if (!admin) return res.status(401).json({ error: "Admin not found" });
+    if (!admin || admin.role !== "admin") return res.status(401).json({ error: "Admin not found" });
 
     bcrypt.compare(password, admin.password).then((isMatch) => {
       if (!isMatch) return res.status(401).json({ error: "Incorrect password" });
@@ -77,7 +97,7 @@ router.post("/login", (req, res) => {
 // @access Public
 router.get("/all", async (req, res) => {
   try {
-    const admins = await Admin.find();
+    const admins = await Admin.find({ role: "admin" });
     res.status(200).json(admins);
   } catch (error) {
     res.status(500).json({ message: "Erreur lors de la récupération des administrateurs", error });
@@ -90,7 +110,7 @@ router.get("/all", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const admin = await Admin.findById(req.params.id);
-    if (!admin) return res.status(404).json({ message: "Administrateur non trouvé" });
+    if (!admin || admin.role !== "admin") return res.status(404).json({ message: "Administrateur non trouvé" });
     res.status(200).json(admin);
   } catch (error) {
     res.status(500).json({ message: "Erreur lors de la récupération de l'administrateur", error });
@@ -102,7 +122,11 @@ router.get("/:id", async (req, res) => {
 // @access Public
 router.put("/:id", async (req, res) => {
   try {
-    const updatedAdmin = await Admin.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedAdmin = await Admin.findOneAndUpdate(
+      { _id: req.params.id, role: "admin" },
+      req.body,
+      { new: true }
+    );
     if (!updatedAdmin) return res.status(404).json({ message: "Administrateur non trouvé" });
     res.status(200).json({ message: "Administrateur mis à jour avec succès", updatedAdmin });
   } catch (error) {
@@ -115,7 +139,7 @@ router.put("/:id", async (req, res) => {
 // @access Public
 router.delete("/:id", async (req, res) => {
   try {
-    const deletedAdmin = await Admin.findByIdAndDelete(req.params.id);
+    const deletedAdmin = await Admin.findOneAndDelete({ _id: req.params.id, role: "admin" });
     if (!deletedAdmin) return res.status(404).json({ message: "Administrateur non trouvé" });
     res.status(200).json({ message: "Administrateur supprimé avec succès" });
   } catch (error) {

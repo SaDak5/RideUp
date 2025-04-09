@@ -41,28 +41,35 @@ function Navbar() {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />{" "}
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              variant="text"
-              sx={{
-                color: "primary.main",
-                textTransform: "none",
-                fontWeight: 600,
-                mr: 2,
-              }}
-            >
-              Passager? Recherchez un trajet
-            </Button>
-            <Button
-              variant="text"
-              sx={{
-                color: "primary.main",
-                textTransform: "none",
-                fontWeight: 600,
-                mr: 2,
-              }}
-            >
-              Conducteur? Proposez un trajet
-            </Button>
+            <Link to="/registerPassager" style={{ textDecoration: "none" }}>
+              <Button
+                variant="text"
+                sx={{
+                  color: "primary.main",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  mr: 2,
+                }}
+              >
+                Passager? Recherchez un trajet
+              </Button>
+            </Link>
+
+            <Link to="/registerConducteur" style={{ textDecoration: "none" }}>
+              {" "}
+              <Button
+                variant="text"
+                sx={{
+                  color: "primary.main",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  mr: 2,
+                }}
+              >
+                Conducteur? Proposez un trajet
+              </Button>
+            </Link>
+
             <Link to="/login" style={{ textDecoration: "none" }}>
               <Button
                 variant="text"
