@@ -1,20 +1,6 @@
 const mongoose = require('mongoose');
-const User = require('./User');  
+const User = require('./User');
 
-// Définir le schéma Admin avec un champ spécifique 'adressse' et 'numTelephone'
-const AdminSchema = new mongoose.Schema({
-    adresse: {
-    type: String,  
-    required: true
-    },
-    numTelephone: {
-        type: Number, 
-        required: true
-        }
-});
-
-
-AdminSchema.add(User.schema);
-
-const Admin= mongoose.model('Admin', AdminSchema);
+// On utilise le même schéma que User pour Admin
+const Admin = mongoose.model('Admin', User.schema);
 module.exports = Admin;

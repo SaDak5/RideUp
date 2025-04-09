@@ -15,8 +15,13 @@ import axios from "axios";
 function RegisterPassager() {
   const [formData, setFormData] = useState({
     username: "",
+    nom: "",
+    prenom: "",
+    adresse: "",
+    numTelephone: "",
     email: "",
     password: "",
+    numCin: "",
     localisation: "",
   });
 
@@ -42,6 +47,35 @@ function RegisterPassager() {
     setError("");
     setSuccess("");
 
+    // Validation côté client
+    if (
+      !formData.username ||
+      !formData.nom ||
+      !formData.prenom ||
+      !formData.adresse ||
+      !formData.numTelephone ||
+      !formData.email ||
+      !formData.password ||
+      !formData.numCin ||
+      !formData.localisation
+    ) {
+      setError("Tous les champs sont requis.");
+      return;
+    }
+
+    // Validation de l'email
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("L'email est invalide.");
+      return;
+    }
+
+    // Validation du mot de passe (exemple simple de validation de longueur)
+    if (formData.password.length < 6) {
+      setError("Le mot de passe doit comporter au moins 6 caractères.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:3004/passagers/register",
@@ -55,8 +89,13 @@ function RegisterPassager() {
       setSuccess("✅ Un nouveau passager a été ajouté avec succès !");
       setFormData({
         username: "",
+        nom: "",
+        prenom: "",
+        adresse: "",
+        numTelephone: "",
         email: "",
         password: "",
+        numCin: "",
         localisation: "",
       });
     } catch (error) {
@@ -94,6 +133,42 @@ function RegisterPassager() {
           />
           <TextField
             fullWidth
+            label="Nom"
+            name="nom"
+            value={formData.nom}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Prénom"
+            name="prenom"
+            value={formData.prenom}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Adresse"
+            name="adresse"
+            value={formData.adresse}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Numéro de téléphone"
+            name="numTelephone"
+            value={formData.numTelephone}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
             label="Email"
             type="email"
             name="email"
@@ -108,6 +183,15 @@ function RegisterPassager() {
             type="password"
             name="password"
             value={formData.password}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Numéro de CIN"
+            name="numCin"
+            value={formData.numCin}
             onChange={handleChange}
             margin="normal"
             required

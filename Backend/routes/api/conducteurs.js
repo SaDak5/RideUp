@@ -3,26 +3,27 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const Conducteur = require("../../models/Conducteur");
-const User = require("../../models/User"); // Assurez-vous que vous avez ce modèle User
+const User = require("../../models/User"); // Modèle User
 
 // @route POST api/conducteurs/register
 // @desc Register new conducteur
 // @access Public
 router.post("/register", async (req, res) => {
-  const { username, email, password, typeVehicule, role } = req.body;
+  const { username, nom, prenom, adresse, numCin, numTelephone, email, password, typeVehicule, role } = req.body;
 
-  if (!username || !email || !password || !typeVehicule || !role) {
+  // Vérification des champs obligatoires
+  if (!username || !email || !password || !typeVehicule || !nom || !prenom || !adresse || !numCin || !numTelephone || !role) {
     return res.status(400).json({ status: "notok", msg: "Veuillez remplir tous les champs obligatoires" });
   }
 
   try {
-    // Vérifiez si l'email existe déjà dans la table Users
+    // Vérifier si l'email existe déjà dans la table Users
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ status: "notokmail", msg: "Email déjà utilisé" });
     }
 
-    // Créez d'abord l'utilisateur dans la table 'users'
+    // Créez l'utilisateur dans la table 'users'
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     
@@ -30,26 +31,36 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      role, 
+      role,  // rôle de l'utilisateur
+      nom,   // nom de l'utilisateur
+      prenom, // prénom de l'utilisateur
+      adresse, // adresse de l'utilisateur
+      numCin,  // numéro de CIN de l'utilisateur
+      numTelephone, // numéro de téléphone de l'utilisateur
     });
     
-    // Sauvegardez l'utilisateur
+    // Sauvegarde de l'utilisateur
     await newUser.save();
 
-    // Ensuite, créez le conducteur dans la table 'conducteurs'
+    // Créez le conducteur dans la table 'conducteurs'
     const newConducteur = new Conducteur({
-      _id: newUser._id,  // Utilisez le même ID
+      _id: newUser._id,  // Lier l'utilisateur au conducteur
       username,
+      nom,
+      prenom,
+      adresse,
+      numCin,
+      password,
       email,
-      password: hashedPassword, // Même mot de passe crypté
+      numTelephone,
       typeVehicule,
-      role, // Vous pouvez aussi ajouter un rôle spécifique pour le conducteur ici si nécessaire
+      role,  // rôle du conducteur
     });
 
-    // Sauvegardez le conducteur
+    // Sauvegarde du conducteur
     await newConducteur.save();
     
-    // Génération du token JWT
+    // Générer un token JWT pour l'authentification
     const token = jwt.sign({ id: newUser._id, role: "conducteur" }, config.get("jwtSecret"), { expiresIn: config.get("tokenExpire") });
     
     res.status(200).json({ status: "ok", msg: "Inscription réussie", token, conducteur: newConducteur });

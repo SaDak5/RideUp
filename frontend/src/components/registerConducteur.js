@@ -15,9 +15,15 @@ import axios from "axios";
 function RegisterConducteur() {
   const [formData, setFormData] = useState({
     username: "",
+    nom: "",
+    prenom: "",
+    adresse: "",
+    numTelephone: "",
     email: "",
     password: "",
+    numCin: "",
     typeVehicule: "",
+    role:""
   });
 
   const [error, setError] = useState("");
@@ -42,12 +48,29 @@ function RegisterConducteur() {
     setError("");
     setSuccess("");
 
+    // Validation côté client
+    if (
+      !formData.username ||
+      !formData.nom ||
+      !formData.prenom ||
+      !formData.adresse ||
+      !formData.numTelephone ||
+      !formData.email ||
+      !formData.password ||
+      !formData.numCin ||
+      !formData.typeVehicule
+    
+    ) {
+      setError("Tous les champs sont requis.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:3004/conducteurs/register",
         {
           ...formData,
-          role: "conducteur",
+          role: "conducteur", // Le rôle est fixé à "conducteur" par défaut
         }
       );
 
@@ -57,8 +80,13 @@ function RegisterConducteur() {
       // Réinitialiser le formulaire
       setFormData({
         username: "",
+        nom: "",
+        prenom: "",
+        adresse: "",
+        numTelephone: "",
         email: "",
         password: "",
+        numCin: "",
         typeVehicule: "",
       });
     } catch (error) {
@@ -96,6 +124,42 @@ function RegisterConducteur() {
           />
           <TextField
             fullWidth
+            label="Nom"
+            name="nom"
+            value={formData.nom}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Prénom"
+            name="prenom"
+            value={formData.prenom}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Adresse"
+            name="adresse"
+            value={formData.adresse}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Numéro de téléphone"
+            name="numTelephone"
+            value={formData.numTelephone}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
             label="Email"
             type="email"
             name="email"
@@ -110,6 +174,15 @@ function RegisterConducteur() {
             type="password"
             name="password"
             value={formData.password}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Numéro de CIN"
+            name="numCin"
+            value={formData.numCin}
             onChange={handleChange}
             margin="normal"
             required
