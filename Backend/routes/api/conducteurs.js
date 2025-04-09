@@ -69,28 +69,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// @route POST api/conducteurs/login
-// @desc Login conducteur
-// @access Public
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: "Veuillez fournir un email et un mot de passe" });
-  }
-
-  try {
-    const conducteur = await Conducteur.findOne({ email });
-    if (!conducteur) return res.status(401).json({ error: "Conducteur non trouvé" });
-
-    const isMatch = await bcrypt.compare(password, conducteur.password);
-    if (!isMatch) return res.status(401).json({ error: "Mot de passe incorrect" });
-
-    const token = jwt.sign({ id: conducteur.id, role: "conducteur" }, config.get("jwtSecret"), { expiresIn: config.get("tokenExpire") });
-    res.status(200).json({ token, role: conducteur.role });
-  } catch (error) {
-    res.status(500).json({ error: "Erreur interne du serveur" });
-  }
-});
 
 // @route GET api/conducteurs/all
 // @desc Get all conducteurs
