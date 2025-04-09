@@ -21,7 +21,7 @@ const Login = () => {
   });
 
   const [error, setError] = useState("");
-  const navigate = useNavigate();  // Utilisation de useNavigate au lieu de useHistory
+  const navigate = useNavigate(); // Utilisation de useNavigate au lieu de useHistory
 
   const handleChange = (e) => {
     setFormData({
