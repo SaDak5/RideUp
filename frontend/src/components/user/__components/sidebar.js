@@ -32,7 +32,7 @@ const Sidebar = () => {
         Trier par
       </Typography>
 
-      <FormControl component="fieldset">
+      {/* <FormControl component="fieldset">
         <RadioGroup defaultValue="earliest">
           <FormControlLabel
             value="earliest"
@@ -65,9 +65,9 @@ const Sidebar = () => {
             icon={<TimerIcon />}
           />
         </RadioGroup>
-      </FormControl>
+      </FormControl> */}
 
-      <Divider sx={{ my: 2 }} />
+      {/* <Divider sx={{ my: 2 }} />
 
       <Typography variant="h6" gutterBottom>
         Heure de départ
@@ -107,7 +107,7 @@ const Sidebar = () => {
         control={<Checkbox />}
         label="Max. 2 à l’arrière (81)"
         icon={<PeopleIcon />}
-      />
+      /> */}
     </Box>
   );
 };

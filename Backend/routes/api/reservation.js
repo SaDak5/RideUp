@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
 });
 // ajouter une nouvelle reservation
 router.post("/add", async (req, res) => {
-  const { trajet_id, nb_place } = req.body;
+  const { trajet_id, nb_place, passager_id } = req.body;
 
   try {
     const Trajet = mongoose.model("Trajet");
@@ -58,6 +58,7 @@ router.post("/add", async (req, res) => {
       statut: "en attente",
       date_reservation: new Date(),
       trajet_id,
+      passager_id,
     });
 
     await nouvelleRes.save();
@@ -199,6 +200,55 @@ router.put("/update/:id", async (req, res) => {
     res.status(500).json({
       message: "Erreur lors de la modification de la réservation",
       err,
+    });
+  }
+});
+
+// afficher les réservations par passager_id
+router.get("/passager/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reservations = await Reservation.find({ passager_id: id }).populate({
+      path: "trajet_id",
+      populate: {
+        path: "conducteur_id",
+        model: "Conducteur",
+        populate: {
+          path: "_id", // On veut aller chercher les infos du user dans le schéma Conducteur
+          model: "User",
+        },
+      },
+    });
+
+    if (!reservations.length) {
+      return res
+        .status(404)
+        .json({ message: "Aucune réservation trouvée pour ce passager" });
+    }
+
+    // Pour simplifier le résultat (juste ce qu’on veut retourner)
+    const formatted = reservations.map((res) => ({
+      reservation_id: res._id,
+      nb_place: res.nb_place,
+      statut: res.statut,
+      date_reservation: res.date_reservation,
+      trajet: {
+        ville_depart: res.trajet_id.ville_depart,
+        ville_arrive: res.trajet_id.ville_arrive,
+        date_depart: res.trajet_id.date_depart,
+        heure_depart: res.trajet_id.heure_depart,
+        conducteur_username:
+          res.trajet_id.conducteur_id?.username || "Non trouvé",
+      },
+    }));
+
+    res.status(200).json(formatted);
+  } catch (err) {
+    console.error("Erreur :", err);
+    res.status(500).json({
+      message: "Erreur lors de la récupération des réservations",
+      error: err.message || err,
     });
   }
 });

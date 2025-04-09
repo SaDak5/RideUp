@@ -30,7 +30,7 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Réinitialiser l'état d'erreur
 
@@ -46,9 +46,38 @@ const Login = () => {
       return;
     }
 
-    // Simuler la connexion (ici, vous feriez un appel API réel)
-    console.log("Connexion réussie", formData);
-    navigate("/dashboard"); // Rediriger vers une page après connexion réussie
+    try {
+      // Appel de l'API login
+      const response = await fetch("http://localhost:3004/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Stocker le token dans localStorage (ou un autre stockage sécurisé)
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("userId", data.id);
+        localStorage.setItem("username", data.username);
+
+        // Afficher les informations dans la console
+        console.log("Utilisateur connecté :");
+        console.log("ID :", data.id);
+        console.log("Rôle :", data.role);
+        // Rediriger vers le tableau de bord ou autre page
+        navigate("/passager/trajet");
+      } else {
+        setError(data.error || "Une erreur s'est produite.");
+      }
+    } catch (err) {
+      console.error("Erreur réseau :", err);
+      setError("Erreur lors de la connexion. Veuillez réessayer.");
+    }
   };
 
   return (

@@ -6,6 +6,7 @@ import Login from "./components/login";
 import RegisterConducteur from "./components/registerConducteur";
 import RegisterPassager from "./components/registerPassager";
 import Trajet from "./components/user/passager/trajet";
+import Reservation from "./components/user/passager/reservation";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/registerConducteur" element={<RegisterConducteur />} />
         <Route path="/registerPassager" element={<RegisterPassager />} />
         <Route path="/passager/trajet" element={<Trajet />} />
+        <Route path="/passager/reservation" element={<Reservation />} />
       </Routes>
     </Router>
   );

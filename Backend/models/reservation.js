@@ -22,6 +22,11 @@ const ReservationSchema = new mongoose.Schema(
       ref: "Trajet",
       required: true,
     },
+    passager_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Passager",
+      required: true,
+    },
   },
   { _id: false }
 );

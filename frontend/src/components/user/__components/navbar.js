@@ -5,7 +5,6 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -15,23 +14,38 @@ import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { useNavigate } from "react-router-dom";
 
-const pages = ["Home", "Trajet", "Réservation"];
 const settings = ["Profile", "Logout"];
 
 function Navbar() {
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
+  const role = localStorage.getItem("role");
+  const username = localStorage.getItem("username");
+
+  // const handleOpenNavMenu = (event) => {
+  //   setAnchorElNav(event.currentTarget);
+  // };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+  const handleHome = () => {
+    if (role === "passager") navigate("/passager/trajet");
+    else if (role === "conducteur") navigate("/home");
+  };
+
+  const handleTrajet = () => {
+    if (role === "passager") navigate("/passager/trajet");
+    else if (role === "conducteur") navigate("/home");
+  };
+
+  const handleReservation = () => {
+    if (role === "passager") navigate("/passager/reservation");
+    else if (role === "conducteur") navigate("/home");
   };
 
   const handleCloseUserMenu = () => {
@@ -75,96 +89,66 @@ function Navbar() {
             RideUp
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon sx={{ color: "primary.main" }} />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography
-                    sx={{ textAlign: "center", color: "primary.main" }}
-                  >
-                    {page}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "primary.main",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
-
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{
-                  my: 2,
-                  color: "primary.main",
-                  display: "block",
-                  textTransform: "none",
-                  fontWeight: 800,
-                  mr: 2,
-                }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
             <Button
-              startIcon={<AddCircleOutlineIcon />}
-              variant="text"
+              key="Home"
+              onClick={handleHome}
               sx={{
+                my: 2,
                 color: "primary.main",
+                display: "block",
                 textTransform: "none",
-                fontWeight: 600,
+                fontWeight: 800,
                 mr: 2,
               }}
             >
-              Publier un trajet
+              Home
             </Button>
+            <Button
+              key="Trajet"
+              onClick={handleTrajet}
+              sx={{
+                my: 2,
+                color: "primary.main",
+                display: "block",
+                textTransform: "none",
+                fontWeight: 800,
+                mr: 2,
+              }}
+            >
+              Trajet
+            </Button>
+            <Button
+              key="Reservation"
+              onClick={handleReservation}
+              sx={{
+                my: 2,
+                color: "primary.main",
+                display: "block",
+                textTransform: "none",
+                fontWeight: 800,
+                mr: 2,
+              }}
+            >
+              Réservation
+            </Button>
+          </Box>
+
+          <Box sx={{ flexGrow: 0 }}>
+            {role === "conducteur" && (
+              <Button
+                startIcon={<AddCircleOutlineIcon />}
+                variant="text"
+                sx={{
+                  color: "primary.main",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  mr: 2,
+                }}
+              >
+                Publier un trajet
+              </Button>
+            )}
             <IconButton
               size="large"
               aria-label="show 3 new notifications"
@@ -177,7 +161,9 @@ function Navbar() {
             </IconButton>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp">
+                  {username.charAt(0).toUpperCase()}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu

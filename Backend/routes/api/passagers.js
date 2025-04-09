@@ -94,32 +94,6 @@ router.post("/register", async (req, res) => {
 });
 
 
-// @route POST api/passagers/login
-// @desc Login passager
-// @access Public
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: "Veuillez fournir un email et un mot de passe" });
-  }
-
-  try {
-    const passager = await Passager.findOne({ email });
-    if (!passager) return res.status(401).json({ error: "Passager non trouvé" });
-
-    const isMatch = await bcrypt.compare(password, passager.password);
-    if (!isMatch) return res.status(401).json({ error: "Mot de passe incorrect" });
-
-    const token = jwt.sign({ id: passager.id, role: "passager" }, config.get("jwtSecret"), {
-      expiresIn: config.get("tokenExpire"),
-    });
-
-    res.status(200).json({ token, role: passager.role });
-  } catch (error) {
-    res.status(500).json({ error: "Erreur interne du serveur" });
-  }
-});
-
 // @route GET api/passagers/all
 // @desc Get all passagers
 // @access Public
