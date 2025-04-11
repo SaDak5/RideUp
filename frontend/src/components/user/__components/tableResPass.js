@@ -50,14 +50,18 @@ export default function StickyHeadTable() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell>ID Réservation</TableCell>
-              <TableCell>Trajet</TableCell>
-              <TableCell>Conducteur</TableCell>
-              <TableCell>Places Réservées</TableCell>
-              <TableCell>Date Départ</TableCell>
-              <TableCell>Heure Départ</TableCell>
-              <TableCell>Statut</TableCell>
-              <TableCell>Date Réservation</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>ID Réservation</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Trajet</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Conducteur</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
+                Places Réservées
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Date Départ</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Heure Départ</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Statut</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
+                Date Réservation
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

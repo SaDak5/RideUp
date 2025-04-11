@@ -16,11 +16,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
 
-const settings = ["Profile", "Logout"];
-
 function Navbar() {
   const navigate = useNavigate();
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const role = localStorage.getItem("role");
@@ -36,6 +33,11 @@ function Navbar() {
   const handleHome = () => {
     if (role === "passager") navigate("/passager/trajet");
     else if (role === "conducteur") navigate("/home");
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
   const handleTrajet = () => {
@@ -162,7 +164,7 @@ function Navbar() {
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp">
-                  {username.charAt(0).toUpperCase()}
+                  {username ? username.charAt(0).toUpperCase() : "?"}
                 </Avatar>
               </IconButton>
             </Tooltip>
@@ -182,7 +184,7 @@ function Navbar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
+              {/* {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography
                     sx={{ textAlign: "center", color: "primary.main" }}
@@ -190,7 +192,24 @@ function Navbar() {
                     {setting}
                   </Typography>
                 </MenuItem>
-              ))}
+              ))} */}
+
+              <MenuItem key="Profile" onClick={handleCloseUserMenu}>
+                <Typography sx={{ textAlign: "center", color: "primary.main" }}>
+                  Profile
+                </Typography>
+              </MenuItem>
+              <MenuItem
+                key="Déconnexion"
+                onClick={() => {
+                  handleLogout();
+                  handleCloseUserMenu();
+                }}
+              >
+                <Typography sx={{ textAlign: "center", color: "primary.main" }}>
+                  Déconnexion
+                </Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

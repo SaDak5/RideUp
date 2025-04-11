@@ -2,20 +2,20 @@ import React from "react";
 import {
   Box,
   Typography,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Checkbox,
-  Divider,
+  // FormControl,
+  // FormControlLabel,
+  // Radio,
+  // RadioGroup,
+  // Checkbox,
+  // Divider,
 } from "@mui/material";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
-import TimerIcon from "@mui/icons-material/Timer";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
-import PeopleIcon from "@mui/icons-material/People";
+// import AccessTimeIcon from "@mui/icons-material/AccessTime";
+// import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+// import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
+// import TimerIcon from "@mui/icons-material/Timer";
+// import VerifiedIcon from "@mui/icons-material/Verified";
+// import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
+// import PeopleIcon from "@mui/icons-material/People";
 
 const Sidebar = () => {
   return (
@@ -29,7 +29,7 @@ const Sidebar = () => {
       }}
     >
       <Typography variant="h6" gutterBottom>
-        Trier par
+        Filtrer par
       </Typography>
 
       {/* <FormControl component="fieldset">

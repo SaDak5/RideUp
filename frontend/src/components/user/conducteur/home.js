@@ -1,39 +1,36 @@
-import { Box, CircularProgress } from "@mui/material";
-import SearchBar from "../__components/search";
-import TrajetCard from "../__components/trajetCard";
-import Sidebar from "../__components/sidebar";
+import { Box } from "@mui/material";
 import Navbar from "../__components/navbar";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
 
-const Trajet = () => {
-  const [loading, setLoading] = useState(true);
-  const [trajets, setTrajets] = useState([]);
-  useEffect(() => {
-    fetchTrajets();
-  }, []);
+const HomeConducteur = () => {
+  //   const [loading, setLoading] = useState(true);
+  //   const [trajets, setTrajets] = useState([]);
+  //   useEffect(() => {
+  //     fetchTrajets();
+  //   }, []);
 
-  const fetchTrajets = () => {
-    axios
-      .get("http://localhost:3004/trajets/all")
-      .then((response) => {
-        setTrajets(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(
-          "Erreur lors de la récupération des utilisateurs :",
-          error
-        );
-        setLoading(false);
-      });
-  };
+  //   const fetchTrajets = () => {
+  //     axios
+  //       .get("http://localhost:3004/trajets/all")
+  //       .then((response) => {
+  //         setTrajets(response.data);
+  //         setLoading(false);
+  //       })
+  //       .catch((error) => {
+  //         console.error(
+  //           "Erreur lors de la récupération des utilisateurs :",
+  //           error
+  //         );
+  //         setLoading(false);
+  //       });
+  //   };
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <Navbar />
 
       {/* Zone Search centrée */}
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -90,9 +87,9 @@ const Trajet = () => {
             ))}
           </Box>
         )}
-      </Box>
+      </Box> */}
     </Box>
   );
 };
 
-export default Trajet;
+export default HomeConducteur;

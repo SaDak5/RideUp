@@ -70,7 +70,13 @@ const Login = () => {
         console.log("ID :", data.id);
         console.log("Rôle :", data.role);
         // Rediriger vers le tableau de bord ou autre page
-        navigate("/passager/trajet");
+        if (data.role === "passager") {
+          navigate("/passager/trajet");
+        } else if (data.role === "conducteur") {
+          navigate("/conducteur/home");
+        } else {
+          setError("Rôle inconnu, redirection impossible.");
+        }
       } else {
         setError(data.error || "Une erreur s'est produite.");
       }
