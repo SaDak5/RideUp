@@ -8,6 +8,7 @@ import RegisterPassager from "./components/registerPassager";
 import Trajet from "./components/user/passager/trajet";
 import Reservation from "./components/user/passager/reservation";
 import HomeConducteur from "./components/user/conducteur/home";
+import ReservationConducteur from "./components/user/conducteur/reservation";
 
 function App() {
   return (
@@ -20,6 +21,10 @@ function App() {
         <Route path="/passager/trajet" element={<Trajet />} />
         <Route path="/conducteur/home" element={<HomeConducteur />} />
         <Route path="/passager/reservation" element={<Reservation />} />
+        <Route
+          path="/conducteur/reservation"
+          element={<ReservationConducteur />}
+        />
       </Routes>
     </Router>
   );

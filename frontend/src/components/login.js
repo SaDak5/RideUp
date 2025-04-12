@@ -138,10 +138,20 @@ const Login = () => {
           )}
 
           <Typography sx={{ mt: 1 }} justifyContent="center">
-            Pas encore de compte ?{" "}
+            Tu est un Conducteur?
             <Link
               component={RouterLink}
-              to="/register"
+              to="/registerConducteur"
+              style={{ color: "blue", textDecoration: "underline" }}
+            >
+              Inscrivez-vous ici
+            </Link>
+          </Typography>
+          <Typography sx={{ mt: 1 }} justifyContent="center">
+            Tu est un passager?
+            <Link
+              component={RouterLink}
+              to="/registerPassager"
               style={{ color: "blue", textDecoration: "underline" }}
             >
               Inscrivez-vous ici

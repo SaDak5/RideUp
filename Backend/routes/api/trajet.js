@@ -7,10 +7,12 @@ const Trajet = require("../../models/trajet");
 // afficher Tous les trajets
 router.get("/all", async (req, res) => {
   try {
-    const trajets = await Trajet.find().populate({
-      path: "conducteur_id",
-      select: "username",
-    });
+    const trajets = await Trajet.find()
+      .populate({
+        path: "conducteur_id",
+        select: "username",
+      })
+      .sort({ createdAt: -1 });
     res.status(200).json(trajets);
   } catch (err) {
     res
@@ -129,6 +131,37 @@ router.delete("/delete/:id", async (req, res) => {
     res
       .status(500)
       .json({ message: "Erreur lors de la suppression du trajet", err });
+  }
+});
+
+// Lister tous les trajets d'un conducteur (avec tous les attributs)
+router.get("/conducteur/:conducteurId", async (req, res) => {
+  const { conducteurId } = req.params;
+
+  try {
+    const trajets = await Trajet.find({ conducteur_id: conducteurId })
+      .populate({
+        path: "conducteur_id",
+        select: "username",
+      })
+      .sort({ createdAt: -1 });
+
+    if (trajets.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Aucun trajet trouvé pour ce conducteur" });
+    }
+
+    res.status(200).json(trajets);
+  } catch (err) {
+    console.error(
+      "Erreur lors de la récupération des trajets par conducteur:",
+      err
+    );
+    res.status(500).json({
+      message: "Erreur lors de la récupération des trajets",
+      error: err,
+    });
   }
 });
 

@@ -1,8 +1,10 @@
 import { Box } from "@mui/material";
 import Navbar from "../__components/navbar";
-import TableTrajet from "../__components/tableTrajet";
+// import TableTrajet from "../__components/tableTrajet";
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
 
-const HomeConducteur = () => {
+const ReservationConducteur = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <Navbar />
@@ -17,10 +19,10 @@ const HomeConducteur = () => {
           marginLeft: 9,
         }}
       >
-        <TableTrajet />
+        {/* <TableTrajet /> */}
       </Box>
     </Box>
   );
 };
 
-export default HomeConducteur;
+export default ReservationConducteur;
