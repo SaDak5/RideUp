@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import Navbar from "../__components/navbar";
+import TableReservationConducteur from "../__components/tableResCond";
 // import TableTrajet from "../__components/tableTrajet";
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
@@ -19,7 +20,7 @@ const ReservationConducteur = () => {
           marginLeft: 9,
         }}
       >
-        {/* <TableTrajet /> */}
+        <TableReservationConducteur />
       </Box>
     </Box>
   );

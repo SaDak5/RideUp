@@ -8,6 +8,9 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import axios from "axios";
+import DeleteIcon from "@mui/icons-material/Delete";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import { IconButton, Tooltip } from "@mui/material";
 
 export default function StickyHeadTable() {
   const [page, setPage] = React.useState(0);
@@ -21,7 +24,11 @@ export default function StickyHeadTable() {
         const res = await axios.get(
           `http://localhost:3004/reservations/passager/${passagerId}`
         );
-        setRows(res.data);
+        const sorted = res.data.sort(
+          (a, b) => new Date(b.date_reservation) - new Date(a.date_reservation)
+        );
+        setRows(sorted);
+        // setRows(res.data);
       } catch (error) {
         console.error("Erreur lors du chargement des réservations", error);
       }
@@ -58,10 +65,10 @@ export default function StickyHeadTable() {
               </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Date Départ</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Heure Départ</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Statut</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>
                 Date Réservation
               </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Statut</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -80,7 +87,7 @@ export default function StickyHeadTable() {
                   <TableCell>{row.nb_place}</TableCell>
                   <TableCell>{formatDate(row.trajet.date_depart)}</TableCell>
                   <TableCell>{row.trajet.heure_depart}</TableCell>
-                  <TableCell
+                  {/* <TableCell
                     sx={{
                       color:
                         row.statut === "accepté"
@@ -92,9 +99,39 @@ export default function StickyHeadTable() {
                     }}
                   >
                     {row.statut}
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell>{formatDate(row.date_reservation)}</TableCell>
+                  <TableCell>
+                    {row.statut === "en attente" ? (
+                      <>
+                        <Tooltip title="Modifier">
+                          <IconButton
+
+                          // onClick={() => handleEdit(row)}
+                          >
+                            <BorderColorIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Supprimer">
+                          <IconButton
+
+                          // onClick={() => handleDelete(row.reservation_id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      <strong
+                        style={{
+                          color: row.statut === "accepté" ? "green" : "red",
+                        }}
+                      >
+                        {row.statut === "accepté" ? "Accepté" : "Refusé"}
+                      </strong>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

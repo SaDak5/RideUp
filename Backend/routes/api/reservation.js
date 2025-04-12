@@ -209,17 +209,20 @@ router.get("/passager/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const reservations = await Reservation.find({ passager_id: id }).populate({
-      path: "trajet_id",
-      populate: {
-        path: "conducteur_id",
-        model: "Conducteur",
+    await Reservation.deleteMany({ trajet_id: null });
+    const reservations = await Reservation.find({ passager_id: id })
+      .populate({
+        path: "trajet_id",
         populate: {
-          path: "_id", // On veut aller chercher les infos du user dans le schéma Conducteur
-          model: "User",
+          path: "conducteur_id",
+          model: "Conducteur",
+          populate: {
+            path: "_id",
+            model: "User",
+          },
         },
-      },
-    });
+      })
+      .sort({ date_reservation: -1 });
 
     if (!reservations.length) {
       return res
@@ -227,19 +230,85 @@ router.get("/passager/:id", async (req, res) => {
         .json({ message: "Aucune réservation trouvée pour ce passager" });
     }
 
+    const filtered = reservations.filter((res) => res.trajet_id);
+
     // Pour simplifier le résultat (juste ce qu’on veut retourner)
+    const formatted = reservations
+      .filter((res) => res.trajet_id)
+      .map((res) => ({
+        reservation_id: res._id,
+        nb_place: res.nb_place,
+        statut: res.statut,
+        date_reservation: res.date_reservation,
+        trajet: {
+          ville_depart: res.trajet_id?.ville_depart || "Inconnu",
+          ville_arrive: res.trajet_id?.ville_arrive || "Inconnu",
+          date_depart: res.trajet_id?.date_depart || "Non défini",
+          heure_depart: res.trajet_id?.heure_depart || "Non défini",
+          conducteur_username:
+            res.trajet_id?.conducteur_id?.username || "Non trouvé",
+        },
+      }));
+
+    res.status(200).json(formatted);
+  } catch (err) {
+    console.error("Erreur :", err);
+    res.status(500).json({
+      message: "Erreur lors de la récupération des réservations",
+      error: err.message || err,
+    });
+  }
+});
+
+// afficher les réservations par conducteur_id avec info passager
+router.get("/conducteur/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const Trajet = mongoose.model("Trajet");
+
+    // Récupérer tous les trajets appartenant au conducteur
+    const trajets = await Trajet.find({ conducteur_id: id });
+
+    const trajetIds = trajets.map((t) => t._id);
+    if (!trajetIds.length) {
+      return res
+        .status(404)
+        .json({ message: "Aucun trajet trouvé pour ce conducteur" });
+    }
+
+    // Trouver toutes les réservations liées à ces trajets
+    const reservations = await Reservation.find({
+      trajet_id: { $in: trajetIds },
+    })
+      .populate("passager_id") // Pour obtenir les infos du passager
+      .populate("trajet_id"); // Pour obtenir les infos du trajet si besoin
+
+    if (!reservations.length) {
+      return res
+        .status(404)
+        .json({ message: "Aucune réservation trouvée pour ce conducteur" });
+    }
+
+    // Formater les données de manière lisible
     const formatted = reservations.map((res) => ({
       reservation_id: res._id,
       nb_place: res.nb_place,
       statut: res.statut,
       date_reservation: res.date_reservation,
+      passager: {
+        id: res.passager_id?._id,
+        nom: res.passager_id?.nom || "Non spécifié",
+        prenom: res.passager_id?.prenom || "Non spécifié",
+        email: res.passager_id?.email || "Non spécifié",
+        username: res.passager_id?.username || "Non spécifié",
+        numTelephone: res.passager_id?.numTelephone || "Non spécifié",
+      },
       trajet: {
-        ville_depart: res.trajet_id.ville_depart,
-        ville_arrive: res.trajet_id.ville_arrive,
-        date_depart: res.trajet_id.date_depart,
-        heure_depart: res.trajet_id.heure_depart,
-        conducteur_username:
-          res.trajet_id.conducteur_id?.username || "Non trouvé",
+        ville_depart: res.trajet_id?.ville_depart,
+        ville_arrive: res.trajet_id?.ville_arrive,
+        date_depart: res.trajet_id?.date_depart,
+        heure_depart: res.trajet_id?.heure_depart,
       },
     }));
 
@@ -247,7 +316,7 @@ router.get("/passager/:id", async (req, res) => {
   } catch (err) {
     console.error("Erreur :", err);
     res.status(500).json({
-      message: "Erreur lors de la récupération des réservations",
+      message: "Erreur lors de la récupération des réservations du conducteur",
       error: err.message || err,
     });
   }
