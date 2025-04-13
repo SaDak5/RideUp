@@ -19,8 +19,8 @@ function App() {
         <Route path="/registerConducteur" element={<RegisterConducteur />} />
         <Route path="/registerPassager" element={<RegisterPassager />} />
         <Route path="/passager/trajet" element={<Trajet />} />
-        <Route path="/conducteur/home" element={<HomeConducteur />} />
         <Route path="/passager/reservation" element={<Reservation />} />
+        <Route path="/conducteur/home" element={<HomeConducteur />} />
         <Route
           path="/conducteur/reservation"
           element={<ReservationConducteur />}

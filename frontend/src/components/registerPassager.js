@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
-
+//pdksg
 const RegisterPassager = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -36,7 +36,7 @@ const RegisterPassager = () => {
       const timer = setTimeout(() => {
         setSuccess("");
       }, 5000);
-      return () => clearTimeout(timer); // nettoie le timer si le composant est démonté
+      return () => clearTimeout(timer);
     }
   }, [success]);
 
@@ -49,7 +49,6 @@ const RegisterPassager = () => {
     setError("");
     setSuccess("");
 
-    // Validation côté client
     if (
       !formData.username ||
       !formData.nom ||
@@ -65,14 +64,12 @@ const RegisterPassager = () => {
       return;
     }
 
-    // Validation de l'email
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailRegex.test(formData.email)) {
       setError("L'email est invalide.");
       return;
     }
 
-    // Validation du mot de passe (exemple simple de validation de longueur)
     if (formData.password.length < 6) {
       setError("Le mot de passe doit comporter au moins 6 caractères.");
       return;
@@ -148,6 +145,7 @@ const RegisterPassager = () => {
                 required
                 fullWidth
               />
+
               <TextField
                 label="Prénom"
                 name="prenom"

@@ -113,7 +113,7 @@ router.post("/login", (req, res) => {
 
         // Ajoutez ici le rôle de l'utilisateur à la réponse
         jwt.sign(
-          { _id: user._id, role: user.role }, // Incluez le rôle dans le payload du tokensi nécessaire
+          { id: user.id, role: user.role }, // Incluez le rôle dans le payload du tokensi nécessaire
           config.get("jwtSecret"),
           { expiresIn: config.get("tokenExpire") },
           (err, token) => {
@@ -123,12 +123,14 @@ router.post("/login", (req, res) => {
             }
 
             // Retournez le token, le rôle et l'id dans la réponse
-            return res.status(200).json({
-              token,
-              role: user.role,
-              id: user._id,
-              username: user.username,
-            });
+            return res
+              .status(200)
+              .json({
+                token,
+                role: user.role,
+                id: user._id,
+                username: user.username,
+              });
           }
         );
       });
@@ -155,9 +157,9 @@ router.get("/all", async (req, res) => {
 
 // Lire un utilisateur par ID (READ)
 router.get("/:id", async (req, res) => {
-  const { _id } = req.params;
+  const { id } = req.params;
   try {
-    const user = await User.findById(_id);
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
@@ -172,11 +174,11 @@ router.get("/:id", async (req, res) => {
 
 // Mettre à jour un utilisateur par ID (UPDATE)
 router.put("/:id", async (req, res) => {
-  const { _id } = req.params;
+  const { id } = req.params;
   const { username, email, password, role } = req.body;
   try {
     const updatedUser = await User.findByIdAndUpdate(
-      _id,
+      id,
       { username, email, password, role },
       { new: true }
     );
@@ -196,9 +198,9 @@ router.put("/:id", async (req, res) => {
 
 // Supprimer un utilisateur par ID (DELETE)
 router.delete("/:id", async (req, res) => {
-  const { _id } = req.params;
+  const { id } = req.params;
   try {
-    const deletedUser = await User.findByIdAndDelete(_id);
+    const deletedUser = await User.findByIdAndDelete(id);
     if (!deletedUser) {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }

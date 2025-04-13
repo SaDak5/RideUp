@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
-
+//ojz
 function RegisterConducteur() {
   const [formData, setFormData] = useState({
     username: "",
@@ -26,6 +26,7 @@ function RegisterConducteur() {
     password: "",
     numCin: "",
     typeVehicule: "",
+    role: "",
     role: "",
   });
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ function RegisterConducteur() {
         "http://localhost:3004/conducteurs/register",
         {
           ...formData,
-          role: "conducteur", // Le rôle est fixé à "conducteur" par défaut
+          role: "conducteur",
         }
       );
 
