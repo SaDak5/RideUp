@@ -9,6 +9,10 @@ import Trajet from "./components/user/passager/trajet";
 import Reservation from "./components/user/passager/reservation";
 import HomeConducteur from "./components/user/conducteur/home";
 import ReservationConducteur from "./components/user/conducteur/reservation";
+import Dashboard from "./components/dashboard";
+import Profil from "./components/profil";
+import ModifierProfil from "./components/modifierProfil";
+import ListeUtilisateurs from "./components/listeUtilisateurs";
 
 function App() {
   return (
@@ -25,6 +29,10 @@ function App() {
           path="/conducteur/reservation"
           element={<ReservationConducteur />}
         />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profil" element={<Profil />} />
+        <Route path="/modifierProfil" element={<ModifierProfil />} />
+        <Route path="/listeUtilisateurs" element={<ListeUtilisateurs />} />
       </Routes>
     </Router>
   );

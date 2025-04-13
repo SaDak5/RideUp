@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
-//ojz
+
 function RegisterConducteur() {
   const [formData, setFormData] = useState({
     username: "",
