@@ -6,16 +6,13 @@ import Login from "./components/login";
 import RegisterConducteur from "./components/registerConducteur";
 import RegisterPassager from "./components/registerPassager";
 import Trajet from "./components/user/passager/trajet";
-
+import Reservation from "./components/user/passager/reservation";
+import HomeConducteur from "./components/user/conducteur/home";
+import ReservationConducteur from "./components/user/conducteur/reservation";
 import Dashboard from "./components/dashboard";
 import Profil from "./components/profil";
 import ModifierProfil from "./components/modifierProfil";
 import ListeUtilisateurs from "./components/listeUtilisateurs";
-
-import Reservation from "./components/user/passager/reservation";
-import HomeConducteur from "./components/user/conducteur/home";
-import ReservationConducteur from "./components/user/conducteur/reservation";
-
 
 function App() {
   return (
@@ -26,19 +23,16 @@ function App() {
         <Route path="/registerConducteur" element={<RegisterConducteur />} />
         <Route path="/registerPassager" element={<RegisterPassager />} />
         <Route path="/passager/trajet" element={<Trajet />} />
-
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profil" element={<Profil/>} />
-        <Route path="/modifierProfil" element={<ModifierProfil />} />
-        <Route path="/listeUtilisateurs" element={<ListeUtilisateurs />} />
-
-        <Route path="/conducteur/home" element={<HomeConducteur />} />
         <Route path="/passager/reservation" element={<Reservation />} />
+        <Route path="/conducteur/home" element={<HomeConducteur />} />
         <Route
           path="/conducteur/reservation"
           element={<ReservationConducteur />}
         />
-
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profil" element={<Profil />} />
+        <Route path="/modifierProfil" element={<ModifierProfil />} />
+        <Route path="/listeUtilisateurs" element={<ListeUtilisateurs />} />
       </Routes>
     </Router>
   );

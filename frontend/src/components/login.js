@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import {
   Avatar,
   Box,
-  Button,
-  Checkbox,
   FormControlLabel,
+  Paper,
   TextField,
   Typography,
+  Checkbox,
+  Button,
   Link,
   Card,
   CardContent,
@@ -14,20 +15,22 @@ import {
   Fade,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom"; // ✅ Import RouterLink
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
-  const [showRoleOptions, setShowRoleOptions] = useState(false);
 
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -39,7 +42,7 @@ const Login = () => {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailRegex.test(formData.email)) {
       setError("L'email est invalide.");
       return;
@@ -60,13 +63,19 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("userId", data.id);
-        localStorage.setItem("username", data.username || "");
+        localStorage.setItem("username", data.username);
 
-        console.log("Utilisateur connecté :", data);
+        console.log("Utilisateur connecté :");
+        console.log("ID :", data.id);
+        console.log("Rôle :", data.role);
 
-        // Peu importe le rôle, redirige l'utilisateur vers le profil
-        navigate("/profil");
-
+        if (data.role === "conducteur") {
+          navigate("/conducteur/home");
+        } else if (data.role === "passager") {
+          navigate("/passager/trajet");
+        } else {
+          navigate("/home"); // redirection par défaut
+        }
       } else {
         setError(data.error || "Échec de la connexion.");
       }
@@ -74,15 +83,6 @@ const Login = () => {
       console.error("Erreur réseau :", err);
       setError("Erreur lors de la connexion. Veuillez réessayer.");
     }
-  };
-
-  const handleShowOptions = () => {
-    setShowRoleOptions((prev) => !prev);
-  };
-
-  const handleRoleClick = (role) => {
-    if (role === "conducteur") navigate("/registerConducteur");
-    else if (role === "passager") navigate("/registerPassager");
   };
 
   return (
@@ -93,6 +93,7 @@ const Login = () => {
         backgroundImage: `url(${process.env.PUBLIC_URL}/localisationn.jpg)`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
@@ -109,6 +110,7 @@ const Login = () => {
           zIndex: 1,
         }}
       />
+
       <Card
         sx={{
           display: "flex",
@@ -132,18 +134,50 @@ const Login = () => {
           }}
         />
 
-        <Divider orientation="vertical" flexItem sx={{ borderColor: "#B0B0B0", borderWidth: 0.5 }} />
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{
+            borderColor: "#B0B0B0",
+            borderWidth: 0.5,
+          }}
+        />
 
-        <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", p: 3 }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 2,
+          }}
+        >
           <CardContent sx={{ width: "100%", maxWidth: 450 }}>
-            <Avatar sx={{ mx: "auto", bgcolor: "primary.main", mb: 2 }}>
+            <Avatar
+              sx={{
+                mx: "auto",
+                bgcolor: "primary.main",
+                mb: 2,
+                padding: 1,
+              }}
+            >
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5" align="center" sx={{ mb: 3 }}>
+            <Typography
+              component="h1"
+              variant="h5"
+              align="center"
+              sx={{ mb: 3 }}
+            >
               Se connecter
             </Typography>
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
+            >
               <TextField
                 fullWidth
                 label="Email"
@@ -153,6 +187,16 @@ const Login = () => {
                 onChange={handleChange}
                 margin="normal"
                 required
+                variant="outlined"
+                sx={{
+                  mb: 2,
+                  borderRadius: 2,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#B0B0B0",
+                    },
+                  },
+                }}
               />
               <TextField
                 fullWidth
@@ -163,12 +207,37 @@ const Login = () => {
                 onChange={handleChange}
                 margin="normal"
                 required
+                variant="outlined"
+                sx={{
+                  mb: 3,
+                  borderRadius: 2,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#B0B0B0",
+                    },
+                  },
+                }}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Se souvenir de moi"
+                sx={{
+                  marginBottom: 2,
+                  fontSize: "0.9rem",
+                }}
               />
-              <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  mt: 2,
+                  backgroundColor: "#1976d2",
+                  "&:hover": {
+                    backgroundColor: "#1565c0",
+                  },
+                }}
+              >
                 Se connecter
               </Button>
 
@@ -177,25 +246,18 @@ const Login = () => {
                   {error}
                 </Typography>
               )}
-
-              <Typography sx={{ mt: 3 }} align="center">
-                Pas encore de compte ?{" "}
-                <Link onClick={handleShowOptions} sx={{ color: "blue", cursor: "pointer" }}>
-                  Inscrivez-vous ici
-                </Link>
-              </Typography>
-
-              <Fade in={showRoleOptions} timeout={500}>
-                <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
-                  <Button variant="outlined" onClick={() => handleRoleClick("conducteur")}>
-                    Conducteur
-                  </Button>
-                  <Button variant="outlined" onClick={() => handleRoleClick("passager")}>
-                    Passager
-                  </Button>
-                </Box>
-              </Fade>
             </Box>
+
+            <Typography sx={{ mt: 1 }} align="center">
+              Pas encore de compte ?{" "}
+              <Link
+                component={RouterLink}
+                to="/register"
+                style={{ color: "blue", textDecoration: "underline" }}
+              >
+                Inscrivez-vous ici
+              </Link>
+            </Typography>
           </CardContent>
         </Box>
       </Card>

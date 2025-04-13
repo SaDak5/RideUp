@@ -123,12 +123,14 @@ router.post("/login", (req, res) => {
             }
 
             // Retournez le token, le rôle et l'id dans la réponse
-            return res.status(200).json({
-              token,
-              role: user.role,
-              id: user._id,
-              username: user.username,
-            });
+            return res
+              .status(200)
+              .json({
+                token,
+                role: user.role,
+                id: user._id,
+                username: user.username,
+              });
           }
         );
       });

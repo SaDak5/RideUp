@@ -5,13 +5,14 @@ import {
   Typography,
   Button,
   Alert,
+  // Grid,
   Link,
-  Avatar,
 } from "@mui/material";
+// import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import axios from "axios";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-
+import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+//pdksg
 const RegisterPassager = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -29,16 +30,15 @@ const RegisterPassager = () => {
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
+  // Pour faire disparaître le message de succès après 5 secondes
   useEffect(() => {
-    document.body.style.backgroundImage = `url(${process.env.PUBLIC_URL}/ll.jpg)`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPosition = "center";
-    document.body.style.height = "100vh";
-    document.body.style.margin = "0";
-    return () => {
-      document.body.style = "";
-    };
-  }, []);
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess("");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -49,40 +49,28 @@ const RegisterPassager = () => {
     setError("");
     setSuccess("");
 
-    const {
-      username,
-      nom,
-      prenom,
-      adresse,
-      numTelephone,
-      email,
-      password,
-      numCin,
-      localisation,
-    } = formData;
-
     if (
-      !username ||
-      !nom ||
-      !prenom ||
-      !adresse ||
-      !numTelephone ||
-      !email ||
-      !password ||
-      !numCin ||
-      !localisation
+      !formData.username ||
+      !formData.nom ||
+      !formData.prenom ||
+      !formData.adresse ||
+      !formData.numTelephone ||
+      !formData.email ||
+      !formData.password ||
+      !formData.numCin ||
+      !formData.localisation
     ) {
       setError("Tous les champs sont requis.");
       return;
     }
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(formData.email)) {
       setError("L'email est invalide.");
       return;
     }
 
-    if (password.length < 6) {
+    if (formData.password.length < 6) {
       setError("Le mot de passe doit comporter au moins 6 caractères.");
       return;
     }
@@ -90,9 +78,14 @@ const RegisterPassager = () => {
     try {
       const response = await axios.post(
         "http://localhost:3004/passagers/register",
-        { ...formData, role: "passager" }
+        {
+          ...formData,
+          role: "passager",
+        }
       );
-      setSuccess("✅ Inscription réussie !");
+      navigate("/login");
+      console.log("Inscription réussie", response.data);
+      setSuccess("✅ Un nouveau passager a été ajouté avec succès !");
       setFormData({
         username: "",
         nom: "",
@@ -104,20 +97,17 @@ const RegisterPassager = () => {
         numCin: "",
         localisation: "",
       });
-      navigate("/login");
     } catch (error) {
-      setError(error.response?.data?.msg || "Erreur serveur");
+      console.error("Erreur lors de l'inscription", error);
+      setError(error.response?.data?.msg || "Erreur interne du serveur");
     }
   };
-
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: "100%",
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
-        alignItems: "stretch",
-        justifyContent: "center",
       }}
     >
       {/* Formulaire à gauche */}
@@ -129,48 +119,148 @@ const RegisterPassager = () => {
           justifyContent: "center",
           px: 4,
           py: 6,
-          backgroundColor: "rgba(255,255,255,0.95)",
+          backgroundColor: "#fff",
         }}
       >
         <Box sx={{ width: "100%", maxWidth: 500 }}>
-          <Box sx={{ textAlign: "center", mb: 2 }}>
-            <Avatar sx={{ mx: "auto", bgcolor: "secondary.main" }}>
-              <PersonAddAlt1Icon />
-            </Avatar>
-            <Typography variant="h5" fontWeight="bold" color="#1976d2" mt={1}>
-              Inscription Passager
-            </Typography>
-          </Box>
-
+          <Typography
+            variant="h5"
+            sx={{
+              mb: 3,
+              color: "#7a9cc6",
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Vous êtes un Passager
+          </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: "flex", gap: 2 }}>
-              <TextField fullWidth label="Nom" name="nom" value={formData.nom} onChange={handleChange} required />
-              <TextField fullWidth label="Prénom" name="prenom" value={formData.prenom} onChange={handleChange} required />
+              <TextField
+                label="Nom"
+                name="nom"
+                value={formData.nom}
+                onChange={handleChange}
+                margin="normal"
+                required
+                fullWidth
+              />
+
+              <TextField
+                label="Prénom"
+                name="prenom"
+                value={formData.prenom}
+                onChange={handleChange}
+                margin="normal"
+                required
+                fullWidth
+              />
             </Box>
             <Box sx={{ display: "flex", gap: 2 }}>
-              <TextField fullWidth label="Numéro de CIN" name="numCin" value={formData.numCin} onChange={handleChange} required />
-              <TextField fullWidth label="Téléphone" name="numTelephone" value={formData.numTelephone} onChange={handleChange} required />
+              <TextField
+                fullWidth
+                label="Numéro de CIN"
+                name="numCin"
+                value={formData.numCin}
+                onChange={handleChange}
+                margin="normal"
+                required
+              />
+              <TextField
+                fullWidth
+                label="Numéro de téléphone"
+                name="numTelephone"
+                value={formData.numTelephone}
+                onChange={handleChange}
+                margin="normal"
+                required
+              />
             </Box>
-            <TextField fullWidth label="Nom d'utilisateur" name="username" value={formData.username} onChange={handleChange} required margin="normal" />
+            <TextField
+              fullWidth
+              label="Nom d'utilisateur"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
             <Box sx={{ display: "flex", gap: 2 }}>
-              <TextField fullWidth label="Adresse" name="adresse" value={formData.adresse} onChange={handleChange} required />
-              <TextField fullWidth label="Localisation" name="localisation" value={formData.localisation} onChange={handleChange} required />
+              <TextField
+                fullWidth
+                label="Adresse"
+                name="adresse"
+                value={formData.adresse}
+                onChange={handleChange}
+                margin="normal"
+                required
+              />
+              <TextField
+                fullWidth
+                label="Localisation"
+                name="localisation"
+                value={formData.localisation}
+                onChange={handleChange}
+                margin="normal"
+                required
+              />
             </Box>
-            <TextField fullWidth label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required margin="normal" />
-            <TextField fullWidth label="Mot de passe" name="password" type="password" value={formData.password} onChange={handleChange} required margin="normal" />
-            <Button variant="contained" fullWidth type="submit" sx={{ mt: 3, backgroundColor: "#1976d2" }}>
-              S'inscrire
+
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="Mot de passe"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+
+            <Button
+              variant="contained"
+              fullWidth
+              type="submit"
+              sx={{ mt: 3, backgroundColor: "#1976d2" }}
+            >
+              Inscription
             </Button>
 
-            <Typography textAlign="center" mt={2}>
-              Déjà un compte ?{" "}
-              <Link component={RouterLink} to="/login" underline="hover" color="primary">
+            <Typography
+              sx={{ mt: 1, textAlign: "center" }}
+              justifyContent="center"
+            >
+              J'ai déjà un compte ?{" "}
+              <Link
+                component={RouterLink}
+                to="/login"
+                style={{ color: "primary.main", textDecoration: "underline" }}
+              >
                 Se connecter
               </Link>
             </Typography>
-
-            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-            {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+            {/* Alertes intégrées dans le formulaire */}
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            )}
+            {success && (
+              <Alert severity="success" sx={{ mt: 2 }}>
+                {success}
+              </Alert>
+            )}
           </form>
         </Box>
       </Box>
@@ -179,16 +269,17 @@ const RegisterPassager = () => {
       <Box
         sx={{
           flex: 1.2,
-          display: { xs: "none", md: "flex" },
-          justifyContent: "center",
+          display: "flex",
           alignItems: "center",
-          backgroundColor: "#f3f6f9",
+          justifyContent: "center",
+          backgroundColor: "#00000",
+          px: 2,
         }}
       >
         <img
-          src={`${process.env.PUBLIC_URL}/register-illustration.png`}
-          alt="Illustration"
-          style={{ maxWidth: "100%", height: "auto" }}
+          src={process.env.PUBLIC_URL + "/9684913.jpg"}
+          alt="illustration"
+          style={{ width: "700px", height: "auto" }}
         />
       </Box>
     </Box>
