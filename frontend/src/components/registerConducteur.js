@@ -23,7 +23,7 @@ function RegisterConducteur() {
     password: "",
     numCin: "",
     typeVehicule: "",
-    role:""
+    role: "",
   });
 
   const [error, setError] = useState("");
@@ -59,7 +59,6 @@ function RegisterConducteur() {
       !formData.password ||
       !formData.numCin ||
       !formData.typeVehicule
-    
     ) {
       setError("Tous les champs sont requis.");
       return;
@@ -70,14 +69,13 @@ function RegisterConducteur() {
         "http://localhost:3004/conducteurs/register",
         {
           ...formData,
-          role: "conducteur", // Le rôle est fixé à "conducteur" par défaut
+          role: "conducteur",
         }
       );
 
       console.log("Inscription réussie", response.data);
       setSuccess("✅ Un nouveau conducteur a été ajouté avec succès !");
 
-      // Réinitialiser le formulaire
       setFormData({
         username: "",
         nom: "",
@@ -96,125 +94,148 @@ function RegisterConducteur() {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Paper elevation={10} sx={{ marginTop: 8, padding: 2 }}>
-        <Avatar
-          sx={{
-            mx: "auto",
-            bgcolor: "secondary.main",
-            textAlign: "center",
-            mb: 1,
-          }}
-        >
-          <PersonAddAlt1Icon />
-        </Avatar>
-        <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
-          Inscription Conducteur
-        </Typography>
+    <>
+      {/* Appliquez l'image de fond sur le body */}
+      <style>
+        {`
+          body {
+            background-image: url(${process.env.PUBLIC_URL}ll.jpg);
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            margin: 0;
+          }
+        `}
+      </style>
 
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            fullWidth
-            label="Nom d'utilisateur"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Nom"
-            name="nom"
-            value={formData.nom}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Prénom"
-            name="prenom"
-            value={formData.prenom}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Adresse"
-            name="adresse"
-            value={formData.adresse}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Numéro de téléphone"
-            name="numTelephone"
-            value={formData.numTelephone}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Mot de passe"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Numéro de CIN"
-            name="numCin"
-            value={formData.numCin}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Type de véhicule"
-            name="typeVehicule"
-            value={formData.typeVehicule}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
+      <Container
+        maxWidth="xs"
+        sx={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Paper elevation={10} sx={{ padding: 3, backgroundColor: "rgba(255, 255, 255, 0.85)" }}>
+          <Avatar
+            sx={{
+              mx: "auto",
+              bgcolor: "secondary.main",
+              textAlign: "center",
+              mb: 1,
+            }}
+          >
+            <PersonAddAlt1Icon />
+          </Avatar>
+          <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
+            Inscription Conducteur
+          </Typography>
 
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
-            S'inscrire
-          </Button>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              fullWidth
+              label="Nom d'utilisateur"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Nom"
+              name="nom"
+              value={formData.nom}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Prénom"
+              name="prenom"
+              value={formData.prenom}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Adresse"
+              name="adresse"
+              value={formData.adresse}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Numéro de téléphone"
+              name="numTelephone"
+              value={formData.numTelephone}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Mot de passe"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Numéro de CIN"
+              name="numCin"
+              value={formData.numCin}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Type de véhicule"
+              name="typeVehicule"
+              value={formData.typeVehicule}
+              onChange={handleChange}
+              margin="normal"
+              required
+            />
 
-          {/* Alertes intégrées dans le formulaire */}
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-          {success && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {success}
-            </Alert>
-          )}
-        </Box>
-      </Paper>
-    </Container>
+            <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
+              S'inscrire
+            </Button>
+
+            {/* Alertes intégrées dans le formulaire */}
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            )}
+            {success && (
+              <Alert severity="success" sx={{ mt: 2 }}>
+                {success}
+              </Alert>
+            )}
+          </Box>
+        </Paper>
+      </Container>
+    </>
   );
 }
 

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
   Avatar,
   Box,
-  Container,
   Paper,
   TextField,
   Typography,
   Button,
   Alert,
+  Container,
 } from "@mui/material";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import axios from "axios";
@@ -28,13 +28,30 @@ function RegisterPassager() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Pour faire disparaître le message de succès après 5 secondes
+  useEffect(() => {
+    // Appliquer l'image de fond globalement sur toute la page
+    document.body.style.backgroundImage = `url(${process.env.PUBLIC_URL}/ll.jpg)`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.height = "100vh";
+    document.body.style.margin = "0"; // Supprime les marges par défaut
+
+    // Nettoyage de l'effet
+    return () => {
+      document.body.style.backgroundImage = "";
+      document.body.style.backgroundSize = "";
+      document.body.style.backgroundPosition = "";
+      document.body.style.height = "";
+      document.body.style.margin = "";
+    };
+  }, []);
+
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
         setSuccess("");
       }, 5000);
-      return () => clearTimeout(timer); // nettoie le timer si le composant est démonté
+      return () => clearTimeout(timer);
     }
   }, [success]);
 
@@ -47,7 +64,6 @@ function RegisterPassager() {
     setError("");
     setSuccess("");
 
-    // Validation côté client
     if (
       !formData.username ||
       !formData.nom ||
@@ -63,14 +79,12 @@ function RegisterPassager() {
       return;
     }
 
-    // Validation de l'email
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailRegex.test(formData.email)) {
       setError("L'email est invalide.");
       return;
     }
 
-    // Validation du mot de passe (exemple simple de validation de longueur)
     if (formData.password.length < 6) {
       setError("Le mot de passe doit comporter au moins 6 caractères.");
       return;
@@ -105,8 +119,23 @@ function RegisterPassager() {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Paper elevation={10} sx={{ marginTop: 8, padding: 2 }}>
+    <Container
+      maxWidth="xs"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh", // Assurez-vous que le Container prend toute la hauteur de la page
+        zIndex: 1,
+      }}
+    >
+      <Paper
+        elevation={10}
+        sx={{
+          padding: 3,
+          backgroundColor: "rgba(255, 255, 255, 0.85)", // Fond semi-transparent
+        }}
+      >
         <Avatar
           sx={{
             mx: "auto",

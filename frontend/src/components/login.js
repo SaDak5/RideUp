@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Avatar,
   Box,
-  Container,
   FormControlLabel,
   Paper,
   TextField,
@@ -10,9 +9,13 @@ import {
   Checkbox,
   Button,
   Link,
+  Card,
+  CardContent,
+  Divider,
+  Fade,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +24,8 @@ const Login = () => {
   });
 
   const [error, setError] = useState("");
-  const navigate = useNavigate();  // Utilisation de useNavigate au lieu de useHistory
+  const [showRoleOptions, setShowRoleOptions] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -32,9 +36,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Réinitialiser l'état d'erreur
+    setError("");
 
-    // Validation simple
     if (!formData.email || !formData.password) {
       setError("Tous les champs sont requis.");
       return;
@@ -47,7 +50,6 @@ const Login = () => {
     }
 
     try {
-      // Appel de l'API login
       const response = await fetch("http://localhost:3004/users/login", {
         method: "POST",
         headers: {
@@ -59,19 +61,17 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Stocker le token dans localStorage (ou un autre stockage sécurisé)
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("userId", data.id);
-        
-        // Afficher les informations dans la console
-        console.log("Utilisateur connecté :");
-        console.log("ID :", data.id);
-        console.log("Rôle :", data.role);
-        // Rediriger vers le tableau de bord ou autre page
-        navigate("/home");
+
+        if (data.role === "passager" || data.role === "conducteur") {
+          navigate("/profil");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        setError(data.error || "Une erreur s'est produite.");
+        setError(data.error || "Échec de la connexion.");
       }
     } catch (err) {
       console.error("Erreur réseau :", err);
@@ -79,70 +79,227 @@ const Login = () => {
     }
   };
 
+  const handleShowOptions = (e) => {
+    e.preventDefault();
+    setShowRoleOptions((prev) => !prev);
+  };
+
+  const handleRoleClick = (role) => {
+    if (role === "conducteur") {
+      navigate("/registerConducteur");
+    } else if (role === "passager") {
+      navigate("/registerPassager");
+    }
+  };
+
   return (
-    <Container maxWidth="xs">
-      <Paper elevation={10} sx={{ marginTop: 8, padding: 2 }}>
-        <Avatar
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        backgroundImage: `url(${process.env.PUBLIC_URL}/localisationn.jpg)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+      }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.4)",
+          zIndex: 1,
+        }}
+      />
+
+      <Card
+        sx={{
+          display: "flex",
+          width: "80%",
+          maxWidth: 1000,
+          height: "560px",
+          boxShadow: 3,
+          border: "2px solid #B0B0B0",
+          position: "relative",
+          zIndex: 2,
+          borderRadius: "50px",
+          overflow: "hidden",
+        }}
+      >
+        <Box
           sx={{
-            mx: "auto",
-            bgcolor: "secondary.main",
-            textAlign: "center",
-            mb: 1,
+            flex: 1,
+            backgroundImage: `url(${process.env.PUBLIC_URL}/login.jpg)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{
+            borderColor: "#B0B0B0",
+            borderWidth: 0.5,
+          }}
+        />
+
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 2,
           }}
         >
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
-          Se connecter
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Mot de passe"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Se souvenir de moi"
-          />
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
-            Se connecter
-          </Button>
-
-          {error && (
-            <Typography color="error" sx={{ mt: 2, textAlign: "center" }}>
-              {error}
-            </Typography>
-          )}
-
-          <Typography sx={{ mt: 1 }} justifyContent="center">
-            Pas encore de compte ?{" "}
-            <Link
-              component={RouterLink}
-              to="/register"
-              style={{ color: "blue", textDecoration: "underline" }}
+          <CardContent sx={{ width: "100%", maxWidth: 450 }}>
+            <Avatar
+              sx={{
+                mx: "auto",
+                bgcolor: "primary.main",
+                mb: 2,
+                padding: 1,
+              }}
             >
-              Inscrivez-vous ici
-            </Link>
-          </Typography>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5" align="center" sx={{ mb: 3 }}>
+              Se connecter
+            </Typography>
+
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                margin="normal"
+                required
+                variant="outlined"
+                sx={{
+                  mb: 2,
+                  borderRadius: 2,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#B0B0B0",
+                    },
+                  },
+                }}
+              />
+              <TextField
+                fullWidth
+                label="Mot de passe"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                margin="normal"
+                required
+                variant="outlined"
+                sx={{
+                  mb: 3,
+                  borderRadius: 2,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#B0B0B0",
+                    },
+                  },
+                }}
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Se souvenir de moi"
+                sx={{
+                  marginBottom: 2,
+                  fontSize: "0.9rem",
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  mt: 2,
+                  backgroundColor: "#1976d2",
+                  "&:hover": {
+                    backgroundColor: "#1565c0",
+                  },
+                }}
+              >
+                Se connecter
+              </Button>
+
+              {error && (
+                <Typography color="error" sx={{ mt: 2 }} align="center">
+                  {error}
+                </Typography>
+              )}
+
+              <Typography sx={{ mt: 3 }} align="center">
+                Pas encore de compte ?{" "}
+                <Link
+                  href="#"
+                  onClick={handleShowOptions}
+                  sx={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                >
+                  Inscrivez-vous ici
+                </Link>
+              </Typography>
+
+              <Fade in={showRoleOptions} timeout={500}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 2,
+                    mt: 2,
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleRoleClick("conducteur")}
+                    sx={{
+                      borderColor: "#1976d2",
+                      color: "#1976d2",
+                      "&:hover": {
+                        backgroundColor: "#1976d2",
+                        color: "#fff",
+                      },
+                    }}
+                  >
+                    Conducteur
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleRoleClick("passager")}
+                    sx={{
+                      borderColor: "#1976d2",
+                      color: "#1976d2",
+                      "&:hover": {
+                        backgroundColor: "#1976d2",
+                        color: "#fff",
+                      },
+                    }}
+                  >
+                    Passager
+                  </Button>
+                </Box>
+              </Fade>
+            </Box>
+          </CardContent>
         </Box>
-      </Paper>
-    </Container>
+      </Card>
+    </Box>
   );
 };
 
