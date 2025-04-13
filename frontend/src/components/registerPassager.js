@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-  Avatar,
   Box,
-  Paper,
   TextField,
   Typography,
   Button,
   Alert,
-  Container,
+  Link,
+  Avatar,
 } from "@mui/material";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import axios from "axios";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 
-function RegisterPassager() {
+const RegisterPassager = () => {
   const [formData, setFormData] = useState({
     username: "",
     nom: "",
@@ -27,33 +27,18 @@ function RegisterPassager() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Appliquer l'image de fond globalement sur toute la page
     document.body.style.backgroundImage = `url(${process.env.PUBLIC_URL}/ll.jpg)`;
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center";
     document.body.style.height = "100vh";
-    document.body.style.margin = "0"; // Supprime les marges par défaut
-
-    // Nettoyage de l'effet
+    document.body.style.margin = "0";
     return () => {
-      document.body.style.backgroundImage = "";
-      document.body.style.backgroundSize = "";
-      document.body.style.backgroundPosition = "";
-      document.body.style.height = "";
-      document.body.style.margin = "";
+      document.body.style = "";
     };
   }, []);
-
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        setSuccess("");
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -64,28 +49,40 @@ function RegisterPassager() {
     setError("");
     setSuccess("");
 
+    const {
+      username,
+      nom,
+      prenom,
+      adresse,
+      numTelephone,
+      email,
+      password,
+      numCin,
+      localisation,
+    } = formData;
+
     if (
-      !formData.username ||
-      !formData.nom ||
-      !formData.prenom ||
-      !formData.adresse ||
-      !formData.numTelephone ||
-      !formData.email ||
-      !formData.password ||
-      !formData.numCin ||
-      !formData.localisation
+      !username ||
+      !nom ||
+      !prenom ||
+      !adresse ||
+      !numTelephone ||
+      !email ||
+      !password ||
+      !numCin ||
+      !localisation
     ) {
       setError("Tous les champs sont requis.");
       return;
     }
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!emailRegex.test(email)) {
       setError("L'email est invalide.");
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (password.length < 6) {
       setError("Le mot de passe doit comporter au moins 6 caractères.");
       return;
     }
@@ -93,14 +90,9 @@ function RegisterPassager() {
     try {
       const response = await axios.post(
         "http://localhost:3004/passagers/register",
-        {
-          ...formData,
-          role: "passager",
-        }
+        { ...formData, role: "passager" }
       );
-
-      console.log("Inscription réussie", response.data);
-      setSuccess("✅ Un nouveau passager a été ajouté avec succès !");
+      setSuccess("✅ Inscription réussie !");
       setFormData({
         username: "",
         nom: "",
@@ -112,148 +104,95 @@ function RegisterPassager() {
         numCin: "",
         localisation: "",
       });
+      navigate("/login");
     } catch (error) {
-      console.error("Erreur lors de l'inscription", error);
-      setError(error.response?.data?.msg || "Erreur interne du serveur");
+      setError(error.response?.data?.msg || "Erreur serveur");
     }
   };
 
   return (
-    <Container
-      maxWidth="xs"
+    <Box
       sx={{
+        height: "100vh",
         display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        alignItems: "stretch",
         justifyContent: "center",
-        alignItems: "center",
-        height: "100vh", // Assurez-vous que le Container prend toute la hauteur de la page
-        zIndex: 1,
       }}
     >
-      <Paper
-        elevation={10}
+      {/* Formulaire à gauche */}
+      <Box
         sx={{
-          padding: 3,
-          backgroundColor: "rgba(255, 255, 255, 0.85)", // Fond semi-transparent
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: 4,
+          py: 6,
+          backgroundColor: "rgba(255,255,255,0.95)",
         }}
       >
-        <Avatar
-          sx={{
-            mx: "auto",
-            bgcolor: "secondary.main",
-            textAlign: "center",
-            mb: 1,
-          }}
-        >
-          <PersonAddAlt1Icon />
-        </Avatar>
-        <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
-          Inscription Passager
-        </Typography>
+        <Box sx={{ width: "100%", maxWidth: 500 }}>
+          <Box sx={{ textAlign: "center", mb: 2 }}>
+            <Avatar sx={{ mx: "auto", bgcolor: "secondary.main" }}>
+              <PersonAddAlt1Icon />
+            </Avatar>
+            <Typography variant="h5" fontWeight="bold" color="#1976d2" mt={1}>
+              Inscription Passager
+            </Typography>
+          </Box>
 
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            fullWidth
-            label="Nom d'utilisateur"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Nom"
-            name="nom"
-            value={formData.nom}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Prénom"
-            name="prenom"
-            value={formData.prenom}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Adresse"
-            name="adresse"
-            value={formData.adresse}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Numéro de téléphone"
-            name="numTelephone"
-            value={formData.numTelephone}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Mot de passe"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Numéro de CIN"
-            name="numCin"
-            value={formData.numCin}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Localisation"
-            name="localisation"
-            value={formData.localisation}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
+          <form onSubmit={handleSubmit}>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField fullWidth label="Nom" name="nom" value={formData.nom} onChange={handleChange} required />
+              <TextField fullWidth label="Prénom" name="prenom" value={formData.prenom} onChange={handleChange} required />
+            </Box>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField fullWidth label="Numéro de CIN" name="numCin" value={formData.numCin} onChange={handleChange} required />
+              <TextField fullWidth label="Téléphone" name="numTelephone" value={formData.numTelephone} onChange={handleChange} required />
+            </Box>
+            <TextField fullWidth label="Nom d'utilisateur" name="username" value={formData.username} onChange={handleChange} required margin="normal" />
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField fullWidth label="Adresse" name="adresse" value={formData.adresse} onChange={handleChange} required />
+              <TextField fullWidth label="Localisation" name="localisation" value={formData.localisation} onChange={handleChange} required />
+            </Box>
+            <TextField fullWidth label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required margin="normal" />
+            <TextField fullWidth label="Mot de passe" name="password" type="password" value={formData.password} onChange={handleChange} required margin="normal" />
+            <Button variant="contained" fullWidth type="submit" sx={{ mt: 3, backgroundColor: "#1976d2" }}>
+              S'inscrire
+            </Button>
 
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
-            S'inscrire
-          </Button>
+            <Typography textAlign="center" mt={2}>
+              Déjà un compte ?{" "}
+              <Link component={RouterLink} to="/login" underline="hover" color="primary">
+                Se connecter
+              </Link>
+            </Typography>
 
-          {/* Alertes intégrées dans le formulaire */}
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-          {success && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {success}
-            </Alert>
-          )}
+            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+            {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+          </form>
         </Box>
-      </Paper>
-    </Container>
+      </Box>
+
+      {/* Image à droite */}
+      <Box
+        sx={{
+          flex: 1.2,
+          display: { xs: "none", md: "flex" },
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f3f6f9",
+        }}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/register-illustration.png`}
+          alt="Illustration"
+          style={{ maxWidth: "100%", height: "auto" }}
+        />
+      </Box>
+    </Box>
   );
-}
+};
 
 export default RegisterPassager;

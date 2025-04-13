@@ -64,14 +64,12 @@ router.post("/register", (req, res) => {
                       .send({ status: "error", msg: "Internal server error" });
                   }
                   // Send response with token and user details
-                  res
-                    .status(200)
-                    .send({
-                      status: "ok",
-                      msg: "Successfully registered",
-                      token,
-                      user,
-                    });
+                  res.status(200).send({
+                    status: "ok",
+                    msg: "Successfully registered",
+                    token,
+                    user,
+                  });
                 }
               );
             })
@@ -123,10 +121,14 @@ router.post("/login", (req, res) => {
               console.error(err);
               return res.status(500).json({ error: "Internal server error" });
             }
-            
-            // Retournez le token, le rôle et l'id dans la réponse
-             return res.status(200).json({ token, role: user.role, id: user.id });
 
+            // Retournez le token, le rôle et l'id dans la réponse
+            return res.status(200).json({
+              token,
+              role: user.role,
+              id: user._id,
+              username: user.username,
+            });
           }
         );
       });
@@ -144,12 +146,10 @@ router.get("/all", async (req, res) => {
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la récupération desutilisateurs",
-        error,
-      });
+    res.status(500).json({
+      message: "Erreur lors de la récupération desutilisateurs",
+      error,
+    });
   }
 });
 
@@ -163,12 +163,10 @@ router.get("/:id", async (req, res) => {
     }
     res.status(200).json(user);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la récupération de l'utilisateur",
-        error,
-      });
+    res.status(500).json({
+      message: "Erreur lors de la récupération de l'utilisateur",
+      error,
+    });
   }
 });
 
@@ -189,12 +187,10 @@ router.put("/:id", async (req, res) => {
       .status(200)
       .json({ message: "Utilisateur mis à jour avec succès", updatedUser });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la mise à jour del'utilisateur",
-        error,
-      });
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour del'utilisateur",
+      error,
+    });
   }
 });
 
@@ -208,13 +204,9 @@ router.delete("/:id", async (req, res) => {
     }
     res.status(200).json({ message: "Utilisateur supprimé avec succès" });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la suppression del'utilisateur",
-        error,
-      });
+    res.status(500).json({
+      message: "Erreur lors de la suppression del'utilisateur",
+      error,
+    });
   }
 });
-
-

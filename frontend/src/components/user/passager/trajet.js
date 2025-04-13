@@ -77,7 +77,7 @@ const Trajet = () => {
                   ville_arrive: trajet.ville_arrive,
                   date_depart: trajet.date_depart,
                   heure_depart: trajet.heure_depart,
-                  place_disponible: trajet.place_disponible,
+                  places_disponibles: trajet.place_disponible,
                   prix: trajet.prix,
                   description: trajet.description,
                   createdAt: trajet.createdAt,
