@@ -24,6 +24,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const ListeUtilisateurs = () => {
   const [utilisateurs, setUtilisateurs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // Nouvel état pour la recherche
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [updatedUser, setUpdatedUser] = useState({
@@ -34,6 +35,12 @@ const ListeUtilisateurs = () => {
   });
 
   useEffect(() => {
+    // Appliquer l'image de fond au body
+    document.body.style.backgroundImage = "url('/path/to/users.avif')";
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+
+    // Charger les utilisateurs
     axios
       .get("http://localhost:3004/users/all")
       .then((res) => {
@@ -42,6 +49,13 @@ const ListeUtilisateurs = () => {
       .catch((err) => {
         console.error("Erreur lors du chargement des utilisateurs :", err);
       });
+
+    // Nettoyer l'effet lors de la destruction du composant
+    return () => {
+      document.body.style.backgroundImage = "";
+      document.body.style.backgroundSize = "";
+      document.body.style.backgroundPosition = "";
+    };
   }, []);
 
   const handleModifier = (user) => {
@@ -85,29 +99,54 @@ const ListeUtilisateurs = () => {
       });
   };
 
+  // Filtrer les utilisateurs en fonction du terme de recherche
+  const filteredUsers = utilisateurs.filter((user) => {
+    const searchString = searchTerm.toLowerCase();
+    return (
+      user.nom.toLowerCase().includes(searchString) ||
+      user.prenom.toLowerCase().includes(searchString) ||
+      user.numCin.toLowerCase().includes(searchString)
+    );
+  });
+
   return (
-    <Box p={4}>
-      <Typography variant="h5" gutterBottom>
+    <Box p={4} sx={{ backgroundColor: "#fafafa" }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
         Liste des utilisateurs
       </Typography>
-      <TableContainer component={Paper} elevation={3}>
+
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+        <TextField
+          variant="outlined"
+          label="Rechercher"
+          fullWidth
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Mise à jour du terme de recherche
+          sx={{ maxWidth: "300px" }}
+        />
+      </Box>
+
+      <TableContainer component={Paper} elevation={4} sx={{ borderRadius: "8px" }}>
         <Table>
-          <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+          <TableHead sx={{ backgroundColor: "#1976d2" }}>
             <TableRow>
-              <TableCell><strong>Nom</strong></TableCell>
-              <TableCell><strong>Prénom</strong></TableCell>
-              <TableCell><strong>Email</strong></TableCell>
-              <TableCell><strong>Rôle</strong></TableCell>
-              <TableCell><strong>Adresse</strong></TableCell>
-              <TableCell><strong>CIN</strong></TableCell>
-              <TableCell><strong>Téléphone</strong></TableCell>
-              <TableCell><strong>Inscription</strong></TableCell>
-              <TableCell align="center"><strong>Actions</strong></TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Nom</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Prénom</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Email</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Rôle</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Adresse</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>CIN</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Téléphone</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Inscription</TableCell>
+              <TableCell align="center" sx={{ color: "white", fontWeight: "bold" }}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {utilisateurs.length > 0 ? (
-              utilisateurs.map((user) => (
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
                 <TableRow key={user._id}>
                   <TableCell>{user.nom}</TableCell>
                   <TableCell>{user.prenom}</TableCell>
@@ -121,18 +160,12 @@ const ListeUtilisateurs = () => {
                   </TableCell>
                   <TableCell align="center">
                     <Tooltip title="Modifier">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleModifier(user)}
-                      >
+                      <IconButton color="primary" onClick={() => handleModifier(user)}>
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Supprimer">
-                      <IconButton
-                        color="error"
-                        onClick={() => handleSupprimer(user._id)}
-                      >
+                      <IconButton color="error" onClick={() => handleSupprimer(user._id)}>
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -158,18 +191,14 @@ const ListeUtilisateurs = () => {
             fullWidth
             label="Nom d'utilisateur"
             value={updatedUser.username}
-            onChange={(e) =>
-              setUpdatedUser({ ...updatedUser, username: e.target.value })
-            }
+            onChange={(e) => setUpdatedUser({ ...updatedUser, username: e.target.value })}
             margin="normal"
           />
           <TextField
             fullWidth
             label="Email"
             value={updatedUser.email}
-            onChange={(e) =>
-              setUpdatedUser({ ...updatedUser, email: e.target.value })
-            }
+            onChange={(e) => setUpdatedUser({ ...updatedUser, email: e.target.value })}
             margin="normal"
           />
           <TextField
@@ -177,18 +206,14 @@ const ListeUtilisateurs = () => {
             label="Mot de passe"
             type="password"
             value={updatedUser.password}
-            onChange={(e) =>
-              setUpdatedUser({ ...updatedUser, password: e.target.value })
-            }
+            onChange={(e) => setUpdatedUser({ ...updatedUser, password: e.target.value })}
             margin="normal"
           />
           <TextField
             fullWidth
             label="Rôle"
             value={updatedUser.role}
-            onChange={(e) =>
-              setUpdatedUser({ ...updatedUser, role: e.target.value })
-            }
+            onChange={(e) => setUpdatedUser({ ...updatedUser, role: e.target.value })}
             margin="normal"
           />
         </DialogContent>

@@ -134,6 +134,10 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+
+
+
+
 // Lister tous les trajets d'un conducteur (avec tous les attributs)
 router.get("/conducteur/:conducteurId", async (req, res) => {
   const { conducteurId } = req.params;
