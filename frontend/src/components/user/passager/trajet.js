@@ -9,6 +9,7 @@ import axios from "axios";
 const Trajet = () => {
   const [loading, setLoading] = useState(true);
   const [trajets, setTrajets] = useState([]);
+ 
   useEffect(() => {
     fetchTrajets();
   }, []);

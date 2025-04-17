@@ -282,7 +282,8 @@ router.get("/conducteur/:id", async (req, res) => {
       trajet_id: { $in: trajetIds },
     })
       .populate("passager_id") // Pour obtenir les infos du passager
-      .populate("trajet_id"); // Pour obtenir les infos du trajet si besoin
+      .populate("trajet_id") // Pour obtenir les infos du trajet si besoin
+      .sort({ date_reservation: -1 });
 
     if (!reservations.length) {
       return res
@@ -296,6 +297,8 @@ router.get("/conducteur/:id", async (req, res) => {
       nb_place: res.nb_place,
       statut: res.statut,
       date_reservation: res.date_reservation,
+      createdAt: res.createdAt,
+      updatedAt: res.updatedAt,
       passager: {
         id: res.passager_id?._id,
         nom: res.passager_id?.nom || "Non spécifié",

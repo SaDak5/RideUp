@@ -19,11 +19,13 @@ import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import axios from "axios";
 
 export default function TrajetCard({ trajet }) {
+
   const [open, setOpen] = useState(false);
   const [places, setPlaces] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const userId = localStorage.getItem("userId");
+  const isAvailable = trajet.places_disponibles > 0
 
   const [newReser, setNewRerser] = useState({
     trajet_id: trajet._id,
@@ -119,9 +121,12 @@ export default function TrajetCard({ trajet }) {
                   backgroundColor: "#f5f5f5",
                 },
               }}
+              disabled={!isAvailable}
             >
               Réserver votre place
+            
             </Button>
+      
           </Box>
         </CardContent>
       </Card>

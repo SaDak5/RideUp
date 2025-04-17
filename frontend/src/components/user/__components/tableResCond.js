@@ -31,10 +31,7 @@ export default function TableReservationConducteur() {
       const res = await axios.get(
         `http://localhost:3004/reservations/conducteur/${conducteurId}`
       );
-      const sorted = res.data.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-      setRows(sorted);
+      setRows(res.data);
     } catch (error) {
       console.error("Erreur lors du chargement des réservations", error);
     }
