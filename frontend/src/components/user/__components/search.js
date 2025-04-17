@@ -1,12 +1,27 @@
-import React from "react";
-import { Box, Button, TextField, InputAdornment } from "@mui/material";
-// import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-// import PersonIcon from "@mui/icons-material/Person";
-// import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import React, { useState } from "react";
+import {
+  Box,
+  TextField,
+  InputAdornment,
+  Button,
+  MenuItem,
+} from "@mui/material";
 import HouseIcon from "@mui/icons-material/House";
 import FlagIcon from "@mui/icons-material/Flag";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
-const SearchBar = () => {
+const SearchBar = ({ onSearch }) => {
+  const [departure, setDeparture] = useState("");
+  const [arrival, setArrival] = useState("");
+  const [date, setDate] = useState(null);
+
+  const handleSearch = () => {
+    onSearch({ departure, arrival, date }); // Appel de la fonction de recherche avec les critères
+  };
+
   return (
     <Box
       sx={{
@@ -14,88 +29,109 @@ const SearchBar = () => {
         alignItems: "center",
         bgcolor: "white",
         borderRadius: 3,
-        boxShadow: 2,
+        boxShadow: 3,
         overflow: "hidden",
         padding: 1,
         width: "100%",
         maxWidth: "85%",
         height: 60,
         gap: 1,
+        transition: "all 0.3s ease",
+        "&:hover": {
+          boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+        },
       }}
     >
       <TextField
         variant="outlined"
         placeholder="Adresse de départ"
+        value={departure}
+        onChange={(e) => setDeparture(e.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <HouseIcon color="action" />
+              <HouseIcon sx={{ color: "primary.main" }} />
             </InputAdornment>
           ),
         }}
         sx={{
           flex: 1,
           borderRadius: 2,
-          bgcolor: "#f7f7f7",
-          "& fieldset": { border: "none" },
+          bgcolor: "transparent",
+          "& fieldset": {
+            borderColor: "#e0e0e0", // Bordure plus claire
+            borderWidth: 1.5, // Bordure plus fine et élégante
+          },
+          "&:hover fieldset": {
+            borderColor: "#b0b0b0", // Changement de couleur au survol
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "#1976d2", // Bordure bleue au focus
+          },
         }}
       />
-
       <TextField
         variant="outlined"
         placeholder="Adresse d'arrivée"
+        value={arrival}
+        onChange={(e) => setArrival(e.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <FlagIcon color="action" />
+              <FlagIcon sx={{ color: "primary.main" }} />
             </InputAdornment>
           ),
         }}
         sx={{
           flex: 1,
           borderRadius: 2,
-          bgcolor: "#f7f7f7",
-          "& fieldset": { border: "none" },
+          bgcolor: "transparent",
+          "& fieldset": {
+            borderColor: "#e0e0e0",
+            borderWidth: 1.5,
+          },
+          "&:hover fieldset": {
+            borderColor: "#b0b0b0",
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "#1976d2",
+          },
         }}
       />
-
-      <TextField
-        type="date"
-        defaultValue={new Date().toISOString().split("T")[0]} // met la date d'aujourd'hui
-        // InputProps={{
-        //   startAdornment: (
-        //     <InputAdornment position="start">
-        //       <CalendarTodayIcon color="action" />
-        //     </InputAdornment>
-        //   ),
-        // }}
-        sx={{
-          flex: 1,
-          borderRadius: 2,
-          bgcolor: "#f7f7f7",
-          "& fieldset": { border: "none" },
-        }}
-      />
-
-      {/* <TextField
-        variant="outlined"
-        defaultValue="1 passager"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <PersonIcon color="action" />
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          flex: 1,
-          borderRadius: 2,
-          bgcolor: "#f7f7f7",
-          "& fieldset": { border: "none" },
-        }}
-      /> */}
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DatePicker
+          label="Date de départ"
+          value={date}
+          onChange={(newDate) => setDate(newDate)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              sx={{
+                flex: 1,
+                "& fieldset": {
+                  borderColor: "#e0e0e0",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#b0b0b0",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#1976d2",
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CalendarTodayIcon sx={{ color: "primary.main" }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+        />
+      </LocalizationProvider>
 
       <Button
+        onClick={handleSearch}
         variant="contained"
         sx={{
           bgcolor: "primary.main",
@@ -104,6 +140,7 @@ const SearchBar = () => {
           px: 3,
           ml: 1,
           height: "100%",
+          fontWeight: "bold",
         }}
       >
         Rechercher

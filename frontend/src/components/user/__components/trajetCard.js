@@ -14,18 +14,24 @@ import {
   TextField,
   Alert,
 } from "@mui/material";
-import { red } from "@mui/material/colors";
+import {
+  LocationOn,
+  CalendarToday,
+  AccessTime,
+  AttachMoney,
+  AirlineSeatReclineNormal,
+} from "@mui/icons-material";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
+import { blue, red, green, grey } from "@mui/material/colors";
 import axios from "axios";
 
 export default function TrajetCard({ trajet }) {
-
   const [open, setOpen] = useState(false);
   const [places, setPlaces] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const userId = localStorage.getItem("userId");
-  const isAvailable = trajet.places_disponibles > 0
+  const isAvailable = trajet.places_disponibles > 0;
 
   const [newReser, setNewRerser] = useState({
     trajet_id: trajet._id,
@@ -37,27 +43,23 @@ export default function TrajetCard({ trajet }) {
   const handleClose = () => {
     setOpen(false);
     setPlaces("");
-    setSuccessMessage(""); // Reset success message when modal closes
-    setErrorMessage(""); // Reset error message when modal closes
+    setSuccessMessage("");
+    setErrorMessage("");
   };
 
   const handleReservation = () => {
     const updatedReservation = { ...newReser, nb_place: parseInt(places, 10) };
 
-    console.log("Réservation effectuée:", updatedReservation);
-
     axios
       .post("http://localhost:3004/reservations/add", updatedReservation)
       .then(() => {
         setSuccessMessage("Réservation envoyée avec succès !");
-        setErrorMessage(""); // Clear any error messages if the request is successful
+        setErrorMessage("");
         setOpen(false);
       })
       .catch((error) => {
-        setErrorMessage(
-          "Erreur lors de l'ajout de la réservation. Veuillez réessayer."
-        );
-        setSuccessMessage(""); // Clear any success messages if the request fails
+        setErrorMessage("Erreur lors de la réservation.");
+        setSuccessMessage("");
         console.error("Erreur lors de l'ajout :", error);
       });
   };
@@ -66,44 +68,71 @@ export default function TrajetCard({ trajet }) {
     <>
       <Card
         sx={{
-          width: 280,
-          margin: "auto",
-          mt: 4,
-          boxShadow: 4,
-          borderRadius: 3,
-          height: "auto",
+          height: "340px",
+          borderRadius: "20px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1.5,
+          transition: "transform 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-4px)",
+            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)", // Effet d'élévation plus prononcé
+          },
         }}
       >
         <CardHeader
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }}>
-              {trajet.conducteur_id?.username?.charAt(0).toUpperCase() || ""}
+            <Avatar sx={{ bgcolor: red[700], fontWeight: "bold" }}>
+              {trajet.conducteur_id?.username?.charAt(0).toUpperCase()}
             </Avatar>
           }
           title={
-            <Typography fontWeight="bold">
+            <Typography variant="h6" fontWeight="bold">
               {trajet.conducteur_id?.username}
             </Typography>
           }
-          subheader={new Date(trajet.createdAt).toLocaleDateString("fr-CA")}
+          subheader={
+            <Typography variant="caption" color="gray">
+              Publié le {new Date(trajet.createdAt).toLocaleDateString("fr-CA")}
+            </Typography>
+          }
         />
+
         <CardContent sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography variant="body2">
-            <strong>Départ :</strong> {trajet.ville_depart}
+          <Typography
+            variant="body2"
+            display="flex"
+            alignItems="center"
+            fontSize="17px"
+          >
+            <LocationOn sx={{ mr: 1, color: blue[300] }} />
+            <strong>
+              {trajet.ville_depart} → {trajet.ville_arrive}
+            </strong>
+            &nbsp;
           </Typography>
-          <Typography variant="body2">
-            <strong>Arrivée :</strong> {trajet.ville_arrive}
-          </Typography>
-          <Typography variant="body2">
+
+          <Typography variant="body2" display="flex" alignItems="center">
+            <AttachMoney sx={{ mr: 1, color: "#e65100" }} />
             <strong>Prix :</strong> {trajet.prix} DT
           </Typography>
-          <Typography variant="body2">
-            <strong>Places dispo :</strong> {trajet.places_disponibles}
+
+          <Typography variant="body2" display="flex" alignItems="center">
+            <AirlineSeatReclineNormal sx={{ mr: 1, color: "#8e24aa" }} />
+            <strong>Places disponible :</strong> {trajet.places_disponibles}
           </Typography>
-          <Typography variant="body2">
+
+          <Typography variant="body2" display="flex" alignItems="center">
+            <CalendarToday sx={{ mr: 1, color: blue[500] }} />
             <strong>Date :</strong>{" "}
-            {new Date(trajet.date_depart).toLocaleDateString("fr-CA")} à{" "}
-            {trajet.heure_depart}
+            {new Date(trajet.date_depart).toLocaleDateString("fr-CA")}
+          </Typography>
+
+          <Typography variant="body2" display="flex" alignItems="center">
+            <AccessTime sx={{ mr: 1, color: green[300] }} />
+            <strong>Heure :</strong> {trajet.heure_depart}
           </Typography>
 
           <Box mt={2} textAlign="center">
@@ -112,33 +141,37 @@ export default function TrajetCard({ trajet }) {
               variant="outlined"
               endIcon={<ArrowCircleRightIcon />}
               sx={{
-                borderRadius: "20px",
+                borderRadius: "30px",
                 textTransform: "none",
-                fontWeight: "bold",
+                fontWeight: 500,
                 px: 3,
-                py: 1,
+                py: 1.2,
+                backgroundColor: "#fdfdfd",
+                borderColor: "primary.main",
+                color: "primary.main",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                transition: "all 0.3s ease",
                 "&:hover": {
-                  backgroundColor: "#f5f5f5",
+                  backgroundColor: "#f0f0f0",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                  borderColor: "#b0b0b0",
+                },
+                "&:disabled": {
+                  backgroundColor: "#f3f3f3",
+                  color: "#999",
+                  borderColor: "#e0e0e0",
                 },
               }}
               disabled={!isAvailable}
             >
               Réserver votre place
-            
             </Button>
-      
           </Box>
         </CardContent>
       </Card>
 
       {/* Modal */}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        keepMounted
-        fullWidth
-        maxWidth="xs"
-      >
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
         <DialogTitle sx={{ fontWeight: "bold", textAlign: "center", pt: 3 }}>
           Réserver votre place
         </DialogTitle>
@@ -168,7 +201,7 @@ export default function TrajetCard({ trajet }) {
         </DialogActions>
       </Dialog>
 
-      {/* Affichage de l'alerte si réservation réussie */}
+      {/* Alertes */}
       {successMessage && (
         <Alert
           severity="success"
@@ -178,13 +211,14 @@ export default function TrajetCard({ trajet }) {
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 9999,
+            backgroundColor: green[500],
+            color: "white",
           }}
         >
           {successMessage}
         </Alert>
       )}
 
-      {/* Affichage de l'alerte en cas d'erreur */}
       {errorMessage && (
         <Alert
           severity="error"
@@ -194,6 +228,8 @@ export default function TrajetCard({ trajet }) {
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 9999,
+            backgroundColor: red[700],
+            color: "white",
           }}
         >
           {errorMessage}
