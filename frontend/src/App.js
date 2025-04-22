@@ -13,6 +13,7 @@ import Dashboard from "./components/dashboard";
 import Profil from "./components/profil";
 import ModifierProfil from "./components/modifierProfil";
 import ListeUtilisateurs from "./components/listeUtilisateurs";
+import DashboardAdmin from "./components/user/admin/dashbadmin";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/profil" element={<Profil />} />
         <Route path="/modifierProfil" element={<ModifierProfil />} />
         <Route path="/listeUtilisateurs" element={<ListeUtilisateurs />} />
+        <Route path="/dashboarda" element={<DashboardAdmin />} />
       </Routes>
     </Router>
   );

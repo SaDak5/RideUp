@@ -282,7 +282,8 @@ router.get("/conducteur/:id", async (req, res) => {
       trajet_id: { $in: trajetIds },
     })
       .populate("passager_id") // Pour obtenir les infos du passager
-      .populate("trajet_id"); // Pour obtenir les infos du trajet si besoin
+      .populate("trajet_id") // Pour obtenir les infos du trajet si besoin
+      .sort({ date_reservation: -1 });
 
     if (!reservations.length) {
       return res
@@ -296,6 +297,8 @@ router.get("/conducteur/:id", async (req, res) => {
       nb_place: res.nb_place,
       statut: res.statut,
       date_reservation: res.date_reservation,
+      createdAt: res.createdAt,
+      updatedAt: res.updatedAt,
       passager: {
         id: res.passager_id?._id,
         nom: res.passager_id?.nom || "Non spécifié",
@@ -321,5 +324,52 @@ router.get("/conducteur/:id", async (req, res) => {
     });
   }
 });
+
+//////////////////////////////////////////
+router.get("/count/accepted", async (req, res) => {
+  try {
+    const countAccepted = await Reservation.countDocuments({ statut: "accepté" });
+    res.status(200).json({ total_accepted: countAccepted });
+  } catch (err) {
+    res.status(500).json({
+      message: "Erreur lors du comptage des réservations acceptées",
+      error: err.message || err,
+    });
+  }
+});
+
+router.get("/count/refused", async (req, res) => {
+  try {
+    const countRefused = await Reservation.countDocuments({ statut: "refusé" });
+    res.status(200).json({ total_refused: countRefused });
+  } catch (err) {
+    res.status(500).json({
+      message: "Erreur lors du comptage des réservations refusées",
+      error: err.message || err,
+    });
+  }
+});
+router.get("/count/all", async (req, res) => {
+  try {
+    const counts = await Promise.all([
+      Reservation.countDocuments({ statut: "en attente" }),
+      Reservation.countDocuments({ statut: "accepté" }),
+      Reservation.countDocuments({ statut: "refusé" }),
+    ]);
+
+    res.status(200).json({
+      en_attente: counts[0],
+      accepté: counts[1],
+      refusé: counts[2],
+    });
+  } catch (err) {
+    console.error("Erreur lors du comptage global des réservations :", err);
+    res.status(500).json({
+      message: "Erreur lors du comptage global des réservations",
+      error: err.message || err,
+    });
+  }
+});
+
 
 module.exports = router;

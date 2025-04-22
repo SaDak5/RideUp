@@ -4,32 +4,32 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 const Admin = require("../../models/Admin");
 
+const User = require("../../models/User");
+
 // @route POST api/admins/register
 // @desc Register new admin
 // @access Public
-router.post("/register", (req, res) => {
-  const {
-    username,
-    nom,
-    prenom,
-    adresse,
-    numCin,
-    numTelephone,
-    email,
-    password,
-  } = req.body;
 
-  // Vérification des champs requis
-  if (!username || !nom || !prenom || !adresse || !numCin || !numTelephone || !email || !password) {
-    return res.status(400).send({ status: "notok", msg: "Please enter all required data" });
+router.post("/register", async (req, res) => {
+  const { username, nom, prenom, adresse, numCin, numTelephone, email, password, role } = req.body;
+
+  // Vérification des champs obligatoires
+  if (!username || !email || !password || !nom || !prenom || !adresse || !numCin || !numTelephone || !role) {
+    return res.status(400).json({ status: "notok", msg: "Veuillez remplir tous les champs obligatoires" });
   }
 
-  Admin.findOne({ email }).then((admin) => {
-    if (admin) {
-      return res.status(400).send({ status: "notokmail", msg: "Email already exists" });
+  try {
+    // Vérifier si l'email existe déjà dans la table Users
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ status: "notokmail", msg: "Email déjà utilisé" });
     }
 
-    const newAdmin = new Admin({
+    // Créez l'utilisateur dans la table 'users'
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
       username,
       nom,
       prenom,
@@ -37,31 +37,35 @@ router.post("/register", (req, res) => {
       numCin,
       numTelephone,
       email,
-      password,
-      role: "admin", // Assurer que le rôle est "admin"
+      password: hashedPassword, // Assurez-vous que le mot de passe est hashé avant de le sauvegarder
+      role: "admin" // Le rôle doit être "admin"
     });
 
-    bcrypt.genSalt(10, (err, salt) => {
-      if (err) return res.status(500).send({ status: "error", msg: "Internal server error" });
+    await newUser.save();
 
-      bcrypt.hash(newAdmin.password, salt, (err, hash) => {
-        if (err) return res.status(500).send({ status: "error", msg: "Internal server error" });
-
-        newAdmin.password = hash;
-        newAdmin.save().then((admin) => {
-          jwt.sign(
-            { id: admin.id },
-            config.get("jwtSecret"),
-            { expiresIn: config.get("tokenExpire") },
-            (err, token) => {
-              if (err) return res.status(500).send({ status: "error", msg: "Internal server error" });
-              res.status(200).send({ status: "ok", msg: "Successfully registered", token, admin });
-            }
-          );
-        }).catch(() => res.status(500).send({ status: "error", msg: "Internal server error" }));
-      });
+    // Créez l'administrateur dans la table 'admins'
+    const newAdmin = new Admin({
+      _id: newUser._id,  // Lier l'utilisateur au rôle admin
+      username,
+      nom,
+      prenom,
+      adresse,
+      numCin,
+      numTelephone,
+      email,
+      password: hashedPassword, // Ajoutez ici le mot de passe hashé
+      role: "admin" // Le rôle de l'admin
     });
-  }).catch(() => res.status(500).send({ status: "error", msg: "Internal server error" }));
+
+    await newAdmin.save();
+
+    // Générer un token JWT pour l'authentification
+    const token = jwt.sign({ id: newUser._id, role: "admin" }, config.get("jwtSecret"), { expiresIn: config.get("tokenExpire") });
+
+    res.status(200).json({ status: "ok", msg: "Inscription réussie", token, admin: newAdmin });
+  } catch (error) {
+    res.status(500).json({ status: "error", msg: "Erreur lors de l'enregistrement de l'admin", error: error.message });
+  }
 });
 
 // @route POST api/admins/login

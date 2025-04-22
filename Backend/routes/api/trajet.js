@@ -169,4 +169,35 @@ router.get("/conducteur/:conducteurId", async (req, res) => {
   }
 });
 
+
+
+// Lister les villes d'arrivée les plus fréquentes
+router.get("/villes-frequentes", async (req, res) => {
+  try {
+    const villesFrequentes = await Trajet.aggregate([
+      {
+        $group: {
+          _id: "$ville_arrive",  // Grouper par la ville d'arrivée
+          count: { $sum: 1 },     // Compter le nombre d'occurrences pour chaque ville
+        },
+      },
+      {
+        $sort: { count: -1 },      // Trier par le nombre d'occurrences (du plus fréquent au moins fréquent)
+      },
+      {
+        $limit: 2,                // Limiter à 2 résultats les plus fréquents
+      },
+    ]);
+
+    if (villesFrequentes.length === 0) {
+      return res.status(404).json({ message: "Aucune ville d'arrivée trouvée" });
+    }
+
+    res.status(200).json(villesFrequentes);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des villes fréquentes:", err);
+    res.status(500).json({ message: "Erreur lors de la récupération des villes d'arrivée", error: err });
+  }
+});
+
 module.exports = router;

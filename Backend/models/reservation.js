@@ -28,7 +28,9 @@ const ReservationSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { _id: false }
+  {
+    timestamps: true,
+  }
 );
 
 ReservationSchema.plugin(AutoIncrement, {

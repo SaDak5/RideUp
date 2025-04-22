@@ -9,11 +9,14 @@ import {
   Button,
   Alert,
   Link,
+  IconButton,
 } from "@mui/material";
 // import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 function RegisterConducteur() {
   const [formData, setFormData] = useState({
@@ -104,6 +107,25 @@ function RegisterConducteur() {
         flexDirection: { xs: "column", md: "row" },
       }}
     >
+      <IconButton
+        sx={{
+          position: "absolute",
+          top: 20,
+          left: 20,
+          backgroundColor: "#1976d2",
+          color: "white",
+          borderRadius: "50%",
+          boxShadow: 2,
+          "&:hover": {
+            backgroundColor: "#1565c0",
+            transform: "scale(1.1)",
+            transition: "0.3s",
+          },
+        }}
+        onClick={() => navigate("/")}
+      >
+        <ArrowBackIcon />
+      </IconButton>
       <Box
         sx={{
           flex: 1,

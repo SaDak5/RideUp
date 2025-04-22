@@ -73,6 +73,8 @@ const Login = () => {
           navigate("/conducteur/home");
         } else if (data.role === "passager") {
           navigate("/passager/trajet");
+        } else if (data.role === "admin") {
+          navigate("/dashboarda");
         } else {
           navigate("/home"); // redirection par défaut
         }

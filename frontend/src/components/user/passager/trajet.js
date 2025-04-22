@@ -1,7 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
 import SearchBar from "../__components/search";
 import TrajetCard from "../__components/trajetCard";
-import Sidebar from "../__components/sidebar";
 import Navbar from "../__components/navbar";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -9,6 +8,16 @@ import axios from "axios";
 const Trajet = () => {
   const [loading, setLoading] = useState(true);
   const [trajets, setTrajets] = useState([]);
+  const [filteredTrajets, setFilteredTrajets] = useState([]);
+  const [searchParams, setSearchParams] = useState({
+    departure: "",
+    arrival: "",
+    date: null,
+  });
+
+  const username = localStorage.getItem("username");
+
+
   useEffect(() => {
     fetchTrajets();
   }, []);
@@ -18,61 +27,91 @@ const Trajet = () => {
       .get("http://localhost:3004/trajets/all")
       .then((response) => {
         setTrajets(response.data);
+        setFilteredTrajets(response.data); // Par défaut, tous les trajets sont affichés
         setLoading(false);
       })
       .catch((error) => {
-        console.error(
-          "Erreur lors de la récupération des utilisateurs :",
-          error
-        );
+        console.error("Erreur lors de la récupération des trajets :", error);
         setLoading(false);
       });
   };
+
+  const handleSearch = ({ departure, arrival, date }) => {
+    setSearchParams({ departure, arrival, date });
+
+    const filtered = trajets.filter((trajet) => {
+      const matchDeparture = departure
+        ? trajet.ville_depart.toLowerCase().includes(departure.toLowerCase())
+        : true;
+      const matchArrival = arrival
+        ? trajet.ville_arrive.toLowerCase().includes(arrival.toLowerCase())
+        : true;
+      const matchDate = date
+        ? new Date(trajet.date_depart).toLocaleDateString("fr-CA") ===
+          new Date(date).toLocaleDateString("fr-CA")
+        : true;
+
+      return matchDeparture && matchArrival && matchDate;
+    });
+
+    setFilteredTrajets(filtered);
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <Navbar />
+      <Navbar sx={{ bgcolor: "primary.dark" }} />
 
-      {/* Zone Search centrée */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
-          mt: 2,
+          mt: 3,
+          mb: 2,
         }}
       >
-        <SearchBar />
+        <SearchBar onSearch={handleSearch} />
       </Box>
 
       <Box
         sx={{
           display: "flex",
           flex: 1,
-          mt: 2,
-          px: 2,
-          gap: 2,
+          mt: 3,
+          px: 3,
+          gap: 3,
+          flexDirection: "column",
+          overflowY: "auto",
         }}
       >
-        <Box sx={{ flexShrink: 0 }}>
-          <Sidebar />
-        </Box>
         {loading ? (
-          <CircularProgress />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            <CircularProgress sx={{ color: "primary.main" }} />
+          </Box>
         ) : (
           <Box
             sx={{
-              flex: 1,
-              pr: 1,
-              display: "flex", // Ajouté
-              flexWrap: "wrap", // Optionnel : permet de passer à la ligne si l'espace manque
-              gap: 2, // Optionnel : espace entre les cartes
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 3,
+              justifyContent: "flex-start",
             }}
           >
-            {trajets.map((trajet) => (
+            {filteredTrajets.map((trajet) => (
               <TrajetCard
+                key={trajet._id}
                 trajet={{
-                  _id: trajet._id,
+                  _id: trajet._id || "Inconnu",
                   ville_depart: trajet.ville_depart,
                   ville_arrive: trajet.ville_arrive,
                   date_depart: trajet.date_depart,
@@ -82,8 +121,9 @@ const Trajet = () => {
                   description: trajet.description,
                   createdAt: trajet.createdAt,
                   conducteur_id: {
-                    _id: trajet.conducteur_id._id,
-                    username: trajet.conducteur_id.username,
+                    _id: trajet.conducteur_id || "Inconnu",
+                    username: trajet.conducteur_id.username || "Inconnu",
+                    // username: username || "Inconnu"
                   },
                 }}
               />
