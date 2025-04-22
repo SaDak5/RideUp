@@ -19,11 +19,17 @@ import {
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
+import { io } from "socket.io-client";
+const socket = io("http://localhost:3004", {
+  transports: ["websocket"],
+  withCredentials: true,
+});
 
 export default function TableReservationConducteur() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState([]);
+  // const username = localStorage.getItem("username");
 
   const fetchTrajets = async () => {
     const conducteurId = localStorage.getItem("userId");
@@ -41,15 +47,30 @@ export default function TableReservationConducteur() {
     fetchTrajets();
   }, []);
 
-  const handleAction = async (action, id) => {
+  const handleAction = async (action, reservation) => {
     try {
-      await axios.put(`http://localhost:3004/reservations/${action}/${id}`);
-      fetchTrajets();
-    } catch (error) {
-      console.error(
-        `Erreur lors de la mise à jour de la réservation ${id}`,
-        error
+      // 1. Mettre à jour la réservation
+      await axios.put(
+        `http://localhost:3004/reservations/${action}/${reservation.reservation_id}`
       );
+
+      // 2. Rafraîchir la liste
+      fetchTrajets();
+
+      socket.emit("reservationStatus", {
+        receiverId: reservation.passager.id,
+        senderId: localStorage.getItem("userId"),
+        message: `Votre réservation a été ${action === "accept" ? "acceptée" : "refusée"}`,
+        reservationId: reservation._id,
+        status: action,
+        createdAt: new Date().toISOString(),
+      });
+
+      console.log(
+        `Notification ${action} envoyée au passager ${reservation.passager_id}`
+      );
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour", error);
     }
   };
 
@@ -109,18 +130,14 @@ export default function TableReservationConducteur() {
                           <Tooltip title="Refuser">
                             <IconButton sx={{ color: "red" }}>
                               <ClearIcon
-                                onClick={() =>
-                                  handleAction("refuse", row.reservation_id)
-                                }
+                                onClick={() => handleAction("refuse", row)}
                               />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Accepter">
                             <IconButton sx={{ color: "green" }}>
                               <CheckIcon
-                                onClick={() =>
-                                  handleAction("accept", row.reservation_id)
-                                }
+                                onClick={() => handleAction("accept", row)}
                               />
                             </IconButton>
                           </Tooltip>
