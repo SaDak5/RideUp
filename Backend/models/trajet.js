@@ -36,6 +36,16 @@ const TrajetSchema = new mongoose.Schema(
       ref: "Conducteur",
       required: true,
     },
+    statut: {
+      type: String,
+      enum: ["En attente", "Validé", "Rejeté"],
+      default: "En attente",
+    },
+    // 🆕 Ajout du motif de rejet (optionnel)
+    motif_rejet: {
+      type: String,
+      default: "", // vide s'il n'est pas rejeté
+    },
     reservations: [
       {
         type: Number,
