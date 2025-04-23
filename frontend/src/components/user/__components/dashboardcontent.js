@@ -137,7 +137,7 @@ export default function DashboardContent() {
             <Card sx={cardSx}>
               <CardContent sx={cardContentSx}>
                 <AccountCircleIcon fontSize="large" sx={{ mr: 1, color: "#1976d2" }} />
-                <Typography variant="h6">Utilisateurs: {users.length}</Typography>
+                <Typography variant="h6">Utilisateurs: {users.length-1}</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -185,10 +185,10 @@ export default function DashboardContent() {
 
         {/* Graphiques */}
         <Grid container spacing={4}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={14} md={8}>
             <Card sx={chartCardSx}>
               <Typography variant="h6" textAlign="center" mb={2}>
-                Répartition Conducteurs / Passagers
+                Répartition Conducteurs vs les Passagers     
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>

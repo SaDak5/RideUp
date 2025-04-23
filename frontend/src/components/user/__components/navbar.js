@@ -18,9 +18,15 @@ import { useNavigate } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { Box as MuiBox } from "@mui/material";
+import { io } from "socket.io-client";
+
 function Navbar() {
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  // const socket = io("http://localhost:3004");
+  const [notifications, setNotifications] = React.useState([]);
+  const [unreadCount, setUnreadCount] = React.useState(0);
+  const [anchorNotif, setAnchorNotif] = React.useState(null);
 
   const role = localStorage.getItem("role");
   const username = localStorage.getItem("username");
@@ -35,12 +41,21 @@ function Navbar() {
   const [heure, setHeure] = React.useState("");
   const [prix, setPrix] = React.useState("");
   const [places, setPlaces] = React.useState("");
+  const socketRef = React.useRef(null);
 
   // const handleOpenNavMenu = (event) => {
   //   setAnchorElNav(event.currentTarget);
   // };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
+  };
+
+  const handleOpenNotifMenu = (event) => {
+    setAnchorNotif(event.currentTarget);
+  };
+
+  const handleCloseNotifMenu = () => {
+    setAnchorNotif(null);
   };
 
   const handleHome = () => {
@@ -106,6 +121,45 @@ function Navbar() {
       console.error("Erreur réseau :", error);
     }
   };
+
+  React.useEffect(() => {
+    socketRef.current = io("http://localhost:3004", {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+
+    const socket = socketRef.current;
+    const userId = localStorage.getItem("userId");
+
+    socket.emit("join", userId);
+
+    const handleNotification = (data) => {
+      console.log("Nouvelle notification reçue:", data);
+
+      const newNotification = {
+        ...data,
+        id: Date.now().toString(),
+        read: false,
+      };
+
+      setNotifications((prev) => [newNotification, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+
+      // Sauvegarde dans localStorage
+      const updatedNotifications = [newNotification, ...notifications];
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(updatedNotifications)
+      );
+    };
+
+    socket.on("notification", handleNotification);
+
+    return () => {
+      socket.off("notification", handleNotification);
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <>
@@ -208,14 +262,95 @@ function Navbar() {
               )}
               <IconButton
                 size="large"
-                aria-label="show 3 new notifications"
+                aria-label="show new notifications"
                 color="inherit"
                 sx={{ mr: 3 }}
+                onClick={handleOpenNotifMenu}
               >
-                <Badge badgeContent={3} color="error">
+                <Badge badgeContent={unreadCount} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
+
+              <Menu
+                anchorEl={anchorNotif}
+                open={Boolean(anchorNotif)}
+                onClose={handleCloseNotifMenu}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                PaperProps={{
+                  sx: {
+                    maxWidth: 350,
+                    width: "100%",
+                    maxHeight: 400,
+                    overflowY: "auto",
+                    boxShadow: 4,
+                    borderRadius: 2,
+                    p: 1,
+                  },
+                }}
+              >
+                {notifications.length === 0 ? (
+                  <MenuItem disabled>Aucune notification</MenuItem>
+                ) : (
+                  notifications.map((notif) => (
+                    <MenuItem
+                      key={notif._id || notif.createdAt}
+                      onClick={() => {
+                        const updatedNotifications = notifications.map((n) =>
+                          n._id === notif._id || n.createdAt === notif.createdAt
+                            ? { ...n, read: true }
+                            : n
+                        );
+                        setNotifications(updatedNotifications);
+                        setUnreadCount((prev) => (prev > 0 ? prev - 1 : 0));
+                        localStorage.setItem(
+                          "notifications",
+                          JSON.stringify(updatedNotifications)
+                        );
+                        handleCloseNotifMenu();
+                        navigate(`/${role}/reservation`);
+                      }}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        gap: 0.5,
+                        px: 2,
+                        py: 1.5,
+                        backgroundColor: notif.read ? "white" : "#f0f4ff",
+                        borderBottom: "1px solid #eee",
+                        transition: "background-color 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "#e3ebff",
+                        },
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        fontWeight={notif.read ? "normal" : "bold"}
+                        color="text.primary"
+                        sx={{ wordBreak: "break-word" }}
+                      >
+                        {notif.message}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {new Date(notif.createdAt).toLocaleString("fr-FR", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })}
+                      </Typography>
+                    </MenuItem>
+                  ))
+                )}
+              </Menu>
+
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Remy Sharp">
@@ -249,13 +384,20 @@ function Navbar() {
       </MenuItem>
     ))} */}
 
-                <MenuItem key="Profile" onClick={handleCloseUserMenu}>
+                <MenuItem
+                  key="Profile"
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    navigate("/profil");
+                  }}
+                >
                   <Typography
                     sx={{ textAlign: "center", color: "primary.main" }}
                   >
                     Profile
                   </Typography>
                 </MenuItem>
+
                 <MenuItem
                   key="Déconnexion"
                   onClick={() => {
