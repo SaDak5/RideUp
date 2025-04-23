@@ -65,16 +65,13 @@ export default function TrajetCard({ trajet }) {
         setSuccessMessage("Réservation envoyée avec succès !");
         setErrorMessage("");
         setOpen(false);
-        // Émettre une notification via socket au conducteur
-        // socket.emit("new_reservation", {
-        //   senderId: userId,
-        //   receiverId: trajet.conducteur_id?._id, // ID du conducteur
-        //   message: `Un utilisateur a réservé ${places} place(s) pour votre trajet de ${trajet.ville_depart} à ${trajet.ville_arrive}.`,
-        // });
 
         socket.emit("newReservation", {
-          receiverId: trajet.conducteur_id._id, // Doit correspondre à l'ID dans Navbar
+          // _id: response.data._id, // ID de la réservation
+          passager_id: localStorage.getItem("userId"),
+          conducteur_id: trajet.conducteur_id._id, // Accès à l'ID via ._id
           message: `${username} a réservé ${places} place(s)`,
+          createdAt: new Date().toISOString(),
         });
       })
 

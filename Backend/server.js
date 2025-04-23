@@ -77,18 +77,21 @@ io.on("connection", (socket) => {
 
   // Gestion des nouvelles réservations (passager → conducteur)
   socket.on("newReservation", (data) => {
-    console.log("Nouvelle réservation reçue:", data);
+    console.log("Données de réservation reçues:", data);
+
     if (!data.conducteur_id) {
       console.error("Erreur: conducteur_id manquant");
       return;
     }
+
+    // Envoi de la notification au conducteur
     io.to(data.conducteur_id.toString()).emit("notification", {
       type: "newReservation",
-      message: `Nouvelle réservation pour votre trajet !`,
+      message: data.message,
       reservationId: data._id,
       senderId: data.passager_id,
       receiverId: data.conducteur_id,
-      createdAt: new Date().toISOString(),
+      createdAt: data.createdAt,
     });
   });
 
