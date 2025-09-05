@@ -15,8 +15,7 @@ const Trajet = () => {
     date: null,
   });
 
-  const username = localStorage.getItem("username");
-
+  // const username = localStorage.getItem("username");
 
   useEffect(() => {
     fetchTrajets();
@@ -24,7 +23,7 @@ const Trajet = () => {
 
   const fetchTrajets = () => {
     axios
-      .get("http://localhost:3004/trajets/all")
+      .get("http://localhost:3004/trajets/valides")
       .then((response) => {
         setTrajets(response.data);
         setFilteredTrajets(response.data); // Par défaut, tous les trajets sont affichés

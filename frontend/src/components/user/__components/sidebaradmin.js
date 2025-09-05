@@ -41,9 +41,17 @@ export default function Sidebar({
 
         <Divider sx={{ my: 1 }} />
 
-        {[  
-          { text: "Gestion Utilisateur", icon: <PeopleAltIcon />, path: "/listeUtilisateurs" },
-          { text: "Contrôler Trajets", icon: <AltRouteIcon />, path: "/conducteur/home" },
+        {[
+          {
+            text: "Gestion Utilisateur",
+            icon: <PeopleAltIcon />,
+            path: "/listeUtilisateurs",
+          },
+          {
+            text: "Contrôler Trajets",
+            icon: <AltRouteIcon />,
+            path: "/controleTrajet",
+          },
         ].map((item) => (
           <ListItem button key={item.text} component={Link} to={item.path}>
             <ListItemIcon>{item.icon}</ListItemIcon>

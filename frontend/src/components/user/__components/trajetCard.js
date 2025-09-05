@@ -61,20 +61,19 @@ export default function TrajetCard({ trajet }) {
 
     axios
       .post("http://localhost:3004/reservations/add", updatedReservation)
-      .then(() => {
+      .then((response) => {
+        // 1. Gestion UI
         setSuccessMessage("Réservation envoyée avec succès !");
         setErrorMessage("");
         setOpen(false);
-
         socket.emit("newReservation", {
-          // _id: response.data._id, // ID de la réservation
-          passager_id: localStorage.getItem("userId"),
-          conducteur_id: trajet.conducteur_id._id, // Accès à l'ID via ._id
+          reservationId: response.data._id, // Utilisez l'ID retourné par le serveur
+          senderId: localStorage.getItem("userId"),
+          conducteur_id: trajet.conducteur_id._id,
           message: `${username} a réservé ${places} place(s)`,
           createdAt: new Date().toISOString(),
         });
       })
-
       .catch((error) => {
         setErrorMessage("Erreur lors de la réservation.");
         setSuccessMessage("");

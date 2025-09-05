@@ -54,6 +54,10 @@ export default function TableTrajet({ refresh }) {
   }, []);
 
   const handleOpenModal = (trajet) => {
+    if (trajet.statut === "Rejeté" || trajet.statut === "Validé") {
+      alert("Vous ne pouvez pas modifier un trajet accepté ou refusé.");
+      return;
+    }
     setSelectedTrajet(trajet);
     setOpenModal(true);
   };
@@ -156,6 +160,13 @@ export default function TableTrajet({ refresh }) {
                 <TableCell>
                   <strong>Création</strong>
                 </TableCell>
+
+                <TableCell>
+                  <strong>Statut</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Motif</strong>
+                </TableCell>
                 <TableCell>
                   <strong>Action</strong>
                 </TableCell>
@@ -174,7 +185,29 @@ export default function TableTrajet({ refresh }) {
                     <TableCell>{row.prix}</TableCell>
                     <TableCell>{formatDate(row.createdAt)}</TableCell>
                     <TableCell>
-                      <IconButton onClick={() => handleOpenModal(row)}>
+                      <span
+                        style={{
+                          color:
+                            row.statut === "Validé"
+                              ? "green"
+                              : row.statut === "Rejeté"
+                                ? "red"
+                                : "orange",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {row.statut}
+                      </span>
+                    </TableCell>
+                    <TableCell>{row.motif_rejet || "-"}</TableCell>
+
+                    <TableCell>
+                      <IconButton
+                        onClick={() => handleOpenModal(row)}
+                        disabled={
+                          row.statut === "Rejeté" || row.statut === "Validé"
+                        }
+                      >
                         <BorderColorIcon />
                       </IconButton>
                       <IconButton

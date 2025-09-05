@@ -274,24 +274,34 @@ module.exports = function (io) {
 
     try {
       const Trajet = mongoose.model("Trajet");
+      const Reservation = mongoose.model("Reservation");
 
-      // Récupérer tous les trajets appartenant au conducteur
+      // 1. Récupérer les trajets du conducteur
       const trajets = await Trajet.find({ conducteur_id: id });
-
       const trajetIds = trajets.map((t) => t._id);
+
       if (!trajetIds.length) {
         return res
           .status(404)
           .json({ message: "Aucun trajet trouvé pour ce conducteur" });
       }
 
-      // Trouver toutes les réservations liées à ces trajets
+      // 2. Récupérer les réservations avec populate
       const reservations = await Reservation.find({
         trajet_id: { $in: trajetIds },
       })
-        .populate("passager_id") // Pour obtenir les infos du passager
-        .populate("trajet_id") // Pour obtenir les infos du trajet si besoin
-        .sort({ date_reservation: -1 });
+        .populate({
+          path: "passager_id",
+          model: "User", // Nom du modèle référencé
+          select: "nom prenom email username numTelephone",
+        })
+        .populate({
+          path: "trajet_id",
+          model: "Trajet",
+          select: "ville_depart ville_arrive date_depart heure_depart",
+        })
+        .sort({ date_reservation: -1 })
+        .lean();
 
       if (!reservations.length) {
         return res
@@ -299,16 +309,14 @@ module.exports = function (io) {
           .json({ message: "Aucune réservation trouvée pour ce conducteur" });
       }
 
-      // Formater les données de manière lisible
+      // 3. Formater la réponse
       const formatted = reservations.map((res) => ({
         reservation_id: res._id,
         nb_place: res.nb_place,
         statut: res.statut,
         date_reservation: res.date_reservation,
-        createdAt: res.createdAt,
-        updatedAt: res.updatedAt,
         passager: {
-          id: res.passager_id?._id,
+          id: res.passager_id?._id || null,
           nom: res.passager_id?.nom || "Non spécifié",
           prenom: res.passager_id?.prenom || "Non spécifié",
           email: res.passager_id?.email || "Non spécifié",
@@ -316,10 +324,10 @@ module.exports = function (io) {
           numTelephone: res.passager_id?.numTelephone || "Non spécifié",
         },
         trajet: {
-          ville_depart: res.trajet_id?.ville_depart,
-          ville_arrive: res.trajet_id?.ville_arrive,
-          date_depart: res.trajet_id?.date_depart,
-          heure_depart: res.trajet_id?.heure_depart,
+          ville_depart: res.trajet_id?.ville_depart || "Non spécifié",
+          ville_arrive: res.trajet_id?.ville_arrive || "Non spécifié",
+          date_depart: res.trajet_id?.date_depart || "Non spécifié",
+          heure_depart: res.trajet_id?.heure_depart || "Non spécifié",
         },
       }));
 
@@ -329,7 +337,36 @@ module.exports = function (io) {
       res.status(500).json({
         message:
           "Erreur lors de la récupération des réservations du conducteur",
-        error: err.message || err,
+        error: err.message,
+      });
+    }
+  });
+  router.get("/count/all", async (req, res) => {
+    try {
+      const totalReservations = await Reservation.countDocuments();
+      res.status(200).json({ total: totalReservations });
+    } catch (err) {
+      res.status(500).json({
+        message: "Erreur lors du comptage des réservations",
+        error: err,
+      });
+    }
+  });
+
+  router.get("/count/by-status", async (req, res) => {
+    try {
+      const counts = {
+        total: await Reservation.countDocuments(),
+        enAttente: await Reservation.countDocuments({ statut: "en attente" }),
+        acceptees: await Reservation.countDocuments({ statut: "accepté" }),
+        refusees: await Reservation.countDocuments({ statut: "refusé" }),
+      };
+
+      res.status(200).json(counts);
+    } catch (err) {
+      res.status(500).json({
+        message: "Erreur lors du comptage des réservations par statut",
+        error: err,
       });
     }
   });

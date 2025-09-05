@@ -9,10 +9,10 @@ import {
   Avatar,
   Tooltip,
   MenuItem,
-  Badge,
+  // Badge,
 } from "@mui/material";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useNavigate } from "react-router-dom";
 
 export default function NavbarAdmin({ handleDrawerToggle }) {
@@ -75,7 +75,7 @@ export default function NavbarAdmin({ handleDrawerToggle }) {
 
         {/* Notification + Avatar à droite */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton
+          {/* <IconButton
             size="large"
             aria-label="show 3 new notifications"
             color="inherit"
@@ -84,7 +84,7 @@ export default function NavbarAdmin({ handleDrawerToggle }) {
             <Badge badgeContent={3} color="error">
               <NotificationsIcon />
             </Badge>
-          </IconButton>
+          </IconButton> */}
 
           <Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -14,6 +14,8 @@ import Profil from "./components/profil";
 import ModifierProfil from "./components/modifierProfil";
 import ListeUtilisateurs from "./components/listeUtilisateurs";
 import DashboardAdmin from "./components/user/admin/dashbadmin";
+import ControlerTrajet from "./components/user/admin/controle";
+import Page404 from "./components/404";
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
         <Route path="/modifierProfil" element={<ModifierProfil />} />
         <Route path="/listeUtilisateurs" element={<ListeUtilisateurs />} />
         <Route path="/dashboarda" element={<DashboardAdmin />} />
+        <Route path="/controleTrajet" element={<ControlerTrajet />} />
+        <Route path="/404" element={<Page404 />} />
       </Routes>
     </Router>
   );
