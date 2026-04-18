@@ -246,7 +246,7 @@ function RegisterConducteur() {
               variant="contained"
               fullWidth
               type="submit"
-              sx={{ mt: 3, backgroundColor: "#1976d2" }}
+              sx={{ mt: 3, backgroundColor: "#115EAA" }}
             >
               Inscription
             </Button>

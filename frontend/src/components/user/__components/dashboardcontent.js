@@ -110,11 +110,25 @@ export default function DashboardContent() {
   ];
   // const userColors = ["#90a4ae", "#64b5f6"];
 
+<<<<<<< HEAD
   // const reservationData = [
   //   { name: "Acceptées", value: acceptedCount },
   //   { name: "Refusées", value: refusedCount },
   // ];
   // const reservationColors = ["#1976d2", "#d32f2f"];
+=======
+  const reservationBarData = [
+    {
+      name: "Réservations",
+      Acceptées: acceptedCount,
+      Refusées: refusedCount,
+    },
+  ];
+  const barColors = {
+    Acceptées: "#1976d2",
+    Refusées: "#d32f2f",
+  };
+>>>>>>> b401e8b (modification design register)
 
   // const cityBreakdown = topCities.map((city) => ({
   //   name: city.ville,
@@ -125,6 +139,7 @@ export default function DashboardContent() {
   // const userColors = ["#43a047", "#fb8c00"];
   const userColors = ["#81c784", "#ffb74d"];
   return (
+<<<<<<< HEAD
     <Box component="main" flexGrow={1} p={4}>
       <Toolbar />
 
@@ -144,9 +159,27 @@ export default function DashboardContent() {
           }}
         >
           Tableau de Bord
+=======
+    <Box display="flex" flexDirection="column" minHeight="100vh">
+      <Box position="absolute" top={0} left={0} width="100%" height="100%" sx={{ backgroundColor: "rgba(255,255,255,0.7)", zIndex: 1 }} />
+
+      <Box position="absolute" top={20} right={30} zIndex={3}>
+        <IconButton color="primary">
+          <Badge badgeContent={3} color="error">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+      </Box>
+
+      <Box component="main" flexGrow={1} p={4} position="relative" zIndex={2}>
+        <Toolbar />
+        <Typography variant="h1" fontWeight="bold" mb={4} sx={{ textAlign: "left", fontFamily: "'Roboto', sans-serif", letterSpacing: "2px", color: "#333", textShadow: "2px 2px 8px rgba(42, 122, 234, 0.1)", fontSize: "2.5rem" }}>
+          Dashboard Administrateur
+>>>>>>> b401e8b (modification design register)
         </Typography>
       </Box>
 
+<<<<<<< HEAD
       <Grid container spacing={3} mb={4} sx={{ height: "100%", width: "100%" }}>
         {/* Carte Conducteurs */}
         <Grid item xs={12} sm={6} md={3}>
@@ -271,6 +304,59 @@ export default function DashboardContent() {
           <Card sx={chartCardSx} width="500px">
             <CardContent>
               <Typography variant="h6" mb={2} fontWeight="medium">
+=======
+        <Grid container spacing={3} mb={4}>
+          <Grid item xs={12} md={4}>
+            <Card sx={cardSx}>
+              <CardContent sx={cardContentSx}>
+                <AccountCircleIcon fontSize="large" sx={{ mr: 1, color: "#1976d2" }} />
+                <Typography variant="h6">Utilisateurs: {users.length - 1}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={cardSx}>
+              <CardContent sx={cardContentSx}>
+                <DriveEtaIcon fontSize="large" sx={{ mr: 1, color: "#43a047" }} />
+                <Typography variant="h6">Conducteurs: {conducteurs.length}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={cardSx}>
+              <CardContent sx={cardContentSx}>
+                <GroupIcon fontSize="large" sx={{ mr: 1, color: "#fb8c00" }} />
+                <Typography variant="h6">Passagers: {passagers.length}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={cardSx}>
+              <CardContent sx={cardContentSx}>
+                <CheckCircleIcon fontSize="large" sx={{ mr: 1, color: "#4caf50" }} />
+                <Typography variant="h6" fontWeight="bold">
+                  Réservations Acceptées: {acceptedCount}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={cardSx}>
+              <CardContent sx={cardContentSx}>
+                <CancelIcon fontSize="large" sx={{ mr: 1, color: "#d32f2f" }} />
+                <Typography variant="h6" fontWeight="bold" color="error">
+                  Réservations Refusées: {refusedCount}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Card sx={chartCardSx}>
+              <Typography variant="h6" textAlign="center" mb={2}>
+>>>>>>> b401e8b (modification design register)
                 Répartition Conducteurs vs Passagers
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
@@ -311,6 +397,8 @@ export default function DashboardContent() {
                       paddingTop: "20px",
                     }}
                   />
+                  <Tooltip />
+                  <Legend verticalAlign="bottom" height={36} />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
@@ -437,23 +525,59 @@ export default function DashboardContent() {
                 Réservations acceptées vs refusées
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
+<<<<<<< HEAD
                 <BarChart
                   data={reservationData}
                   margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
                 >
+=======
+                <BarChart data={reservationBarData}>
+>>>>>>> b401e8b (modification design register)
                   <XAxis dataKey="name" />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Legend verticalAlign="bottom" height={36} />
-                  <Bar dataKey="value" barSize={50}>
-                    {reservationData.map((entry, idx) => (
-                      <Cell key={entry.name} fill={reservationColors[idx]} />
-                    ))}
-                  </Bar>
+                  <Legend verticalAlign="bottom" />
+                  {Object.keys(barColors).map((key) => (
+                    <Bar key={key} dataKey={key} fill={barColors[key]} />
+                  ))}
                 </BarChart>
               </ResponsiveContainer>
+<<<<<<< HEAD
             </CardContent>
           </Card>
+=======
+            </Card>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Card sx={chartCardSx}>
+              <Typography variant="h6" textAlign="center" mb={2}>
+                Villes d'arrivée les plus fréquentes
+              </Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={cityBreakdown}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    label={({ name, percent }) =>
+                      `${name}: ${(percent * 100).toFixed(0)}%`
+                    }
+                  >
+                    {cityBreakdown.map((entry, idx) => (
+                      <Cell key={entry.name} fill={cityColors[idx % cityColors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend verticalAlign="bottom" height={36} />
+                </PieChart>
+              </ResponsiveContainer>
+            </Card>
+          </Grid>
+>>>>>>> b401e8b (modification design register)
         </Grid>
 
         <Grid item xs={12} md={4} width="550px">

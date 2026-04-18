@@ -178,16 +178,7 @@ const ModifierProfil = () => {
               error={error.includes("Email")}
               helperText={error.includes("Email") ? error : ""}
             />
-            <TextField
-              label="Mot de passe"
-              name="password"
-              type="password"
-              value={utilisateur.password}
-              onChange={handleChange}
-              fullWidth
-              error={error.includes("mot de passe")}
-              helperText={error.includes("mot de passe") ? error : ""}
-            />
+           
             <TextField
               label="Téléphone"
               name="numTelephone"

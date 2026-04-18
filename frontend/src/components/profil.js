@@ -9,7 +9,6 @@ import {
   TableContainer,
   TableRow,
   Button,
-  Grid,
   Avatar,
   Box,
 } from "@mui/material";
@@ -77,38 +76,33 @@ const Profil = () => {
       <Navbar />
       <Box
         sx={{
-          backgroundImage: `url(${process.env.PUBLIC_URL}/profile.avif)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
           minHeight: "100vh",
           paddingTop: 4,
           paddingBottom: 4,
+          backgroundColor: "#f5f5f5",
         }}
       >
         <Container maxWidth="md">
           <Paper
             elevation={4}
-            sx={{ padding: 4, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+            sx={{ padding: 4, backgroundColor: "rgba(255, 255, 255, 0.95)" }}
           >
-            <Typography variant="h4" gutterBottom textAlign="center">
-              <Grid
-                container
-                alignItems="center"
-                justifyContent="center"
-                spacing={2}
-              >
-                <Grid item>
-                  <Avatar
-                    alt="Avatar utilisateur"
-                    src={`${process.env.PUBLIC_URL}/profil.jpg`}
-                    sx={{ width: 90, height: 90 }}
-                  />
-                </Grid>
-                <Grid item>
-                  Profil {role === "conducteur" ? "Conducteur" : "Passager"}
-                </Grid>
-              </Grid>
-            </Typography>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              gap={2}
+              mb={3}
+            >
+              <Typography variant="h4">
+                Profil {role === "conducteur" ? "Conducteur" : "Passager"}
+              </Typography>
+              <Avatar
+                alt="Avatar utilisateur"
+                src={`${process.env.PUBLIC_URL}/profil.jpg`}
+                sx={{ width: 90, height: 90 }}
+              />
+            </Box>
 
             <Box display="flex" justifyContent="center">
               <TableContainer
@@ -142,12 +136,6 @@ const Profil = () => {
                         Email
                       </TableCell>
                       <TableCell>{utilisateur.email}</TableCell>
-                    </TableRow>
-                    <TableRow sx={{ height: 56 }}>
-                      <TableCell sx={{ fontWeight: "bold" }} align="right">
-                        Mot de passe
-                      </TableCell>
-                      <TableCell>{"********"}</TableCell>
                     </TableRow>
                     <TableRow sx={{ height: 56 }}>
                       <TableCell sx={{ fontWeight: "bold" }} align="right">
